@@ -64,13 +64,12 @@ struct gpath {
 typedef struct hashmap u32path_map;
 
 /** 
- * La representación de un grafo en una matriz de adyacencia
- * de 32bits.
+ * La representación de un grafo indurecto en una matriz de
+ * adyacencia de 32bits.
  * 
  * @see graph_init
  * @see graph_destroy
  *
- * @member undirected indica si el grafo es bidireccional
  * @member weighted indica si el grafo es pesado
  * @member cache es usado internamente para acelerar algunas
  *               operaciones
@@ -80,7 +79,6 @@ typedef struct hashmap u32path_map;
  *                el peso de dicho vinculo
  */
 struct graph {
-    bool undirected;
     bool weighted;
 
     struct {
@@ -97,11 +95,10 @@ struct graph {
  * @see graph_destroy
  *
  * @param graph el grafo a inicializar
- * @param undirected si el grafo es bidireccional
  * @param weighted si el grafo es pesado
  * @param len la cantidad de vertices que habrá en el grafo
  */
-void graph_init(struct graph* graph, bool undirected, bool weighted, size_t len);
+void graph_init(struct graph* graph, bool weighted, size_t len);
 /**
  * Imprime en el estandar de salida la matriz de adyacencia
  * del grafo.
@@ -121,9 +118,6 @@ void graph_destroy(struct graph* graph);
  *
  * Si los vertices están fueran de los bordes del grafo, no se
  * aplicará ningun vinculo.
- *
- * Si el grafo es bidireccional (@link graph#undirected)
- * entonces se vinculará <vi, wj> de lo contrario (vi, wj).
  *
  * @param graph el grafo a vincular los vertices
  * @param vi el vertice origen (a partir de)
