@@ -43,7 +43,7 @@ static void fread_graph(struct graph* graph, FILE* file) {
     size_t edge_len = 0; 
     fscanf(file, "%ld %ld", &vertex_len, &edge_len);
 
-    graph_init(graph, true, true, vertex_len);
+    graph_init(graph, true, vertex_len);
 
     for (size_t i = 0; i < edge_len; i++) {
         vertex_t vi = 0;

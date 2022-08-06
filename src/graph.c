@@ -38,14 +38,13 @@ static bool g_initial_path(struct graph* graph, vertex_t start_vertex, vertex_t 
  */
 static void g_invalidate_cache(struct graph* graph);
 
-void graph_init(struct graph* graph, bool undirected, bool weighted, size_t len) {
+void graph_init(struct graph* graph, bool weighted, size_t len) {
     if (graph == NULL) {
         return;
     }
 
     graph_destroy(graph);
 
-    graph->undirected = undirected;
     graph->weighted = weighted;
 
     int32_t initial_value = g_empty_weight(graph);
@@ -94,7 +93,6 @@ void graph_destroy(struct graph* graph) {
         return;
     }
     
-    graph->undirected = false;
     graph->weighted = false;
 
     g_invalidate_cache(graph);
@@ -122,10 +120,7 @@ void graph_addw(struct graph* graph, vertex_t vi, vertex_t wj, int32_t weight) {
     }
 
     graph->matrix[vi][wj] = weight;
-
-    if (graph->undirected) {
-        graph->matrix[wj][vi] = weight;
-    }
+    graph->matrix[wj][vi] = weight;
 }
 
 void graph_add(struct graph* graph, vertex_t vi, vertex_t wj) {
@@ -160,10 +155,7 @@ void graph_del(struct graph* graph, vertex_t vi, vertex_t wj) {
 
     int32_t empty_weight = g_empty_weight(graph);
     graph->matrix[vi][wj] = empty_weight;
-
-    if (graph->undirected) {
-        graph->matrix[wj][vi] = empty_weight;
-    }
+    graph->matrix[wj][vi] = empty_weight;
 }
 
 size_t graph_rcount(const struct graph* graph, vertex_t vi) {
