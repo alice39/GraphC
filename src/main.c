@@ -11,6 +11,11 @@
  * @param file el archivo a leer
  */
 static void fread_graph(struct graph* graph, FILE* file);
+/**
+ * El menu principal.
+ *
+ * @param graph el grafo
+ */
 static void on_menu(struct graph* graph);
 
 int main(int argc, char** args) {
