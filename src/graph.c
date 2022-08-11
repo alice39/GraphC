@@ -158,6 +158,7 @@ void graph_del(struct graph* graph, vertex_t vi, vertex_t wj) {
     graph->matrix[wj][vi] = empty_weight;
 }
 
+// NOTA: no es usado, lo implementé por las clases
 size_t graph_rcount(const struct graph* graph, vertex_t vi) {
     if (g_is_out(graph, vi, 0)) {
         return 0;
@@ -175,6 +176,7 @@ size_t graph_rcount(const struct graph* graph, vertex_t vi) {
     return count;
 }
 
+// NOTA: no es usado, pero lo implementé por las clases
 size_t graph_ccount(const struct graph* graph, vertex_t wj) {
     if (g_is_out(graph, 0, wj)) {
         return 0;
