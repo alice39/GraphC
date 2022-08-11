@@ -13,7 +13,7 @@
 /**
  * Representa la llave del mapa.
  */
-typedef size_t mkey_t;
+typedef uint64_t mkey_t;
 /**
  * Representa el tamaño del mapa.
  */
