@@ -301,11 +301,15 @@ void graph_components(struct graph* graph, const struct gcomponent** out_comp) {
         uint32_t i_class = vertex_classes[i];
 
         struct vertex_array* arr = hashmap_get(map, i_class);
+        
+        // si la secuencia de una componente conexa no existe
+        // entonces crear una
         if (arr == NULL) {
             arr = calloc(1, sizeof(struct vertex_array));
             hashmap_put(map, i_class, arr);
         }
 
+        // añade el vertice al final de la secuencia
         vertex_array_reserve(arr, 1);
         arr->data[arr->len - 1] = i;
     }
@@ -372,6 +376,7 @@ void graph_short_path(struct graph* graph,
 
         size_t j_wave = 0;
 
+        // recorre todos los vertices de la ola actual
         vertex_t* actual_waves = &waves[i_wave * vertex_len];
         for (vertex_t i_vertex = *actual_waves; i_vertex != VERTEX_T_MAX; i_vertex = *actual_waves++) {
             if (final_wave != 0) {
@@ -385,9 +390,11 @@ void graph_short_path(struct graph* graph,
                 }
 
                 visited[j_vertex] = true;
+                // añade el vertice para la siguiente ola
                 waves[j_wave + (i_wave + 1) * vertex_len] = j_vertex;
                 j_wave++;
 
+                // si se encontró el vertice final
                 if (j_vertex == end_vertex) {
                     final_wave = i_wave;
                     break;
@@ -400,14 +407,17 @@ void graph_short_path(struct graph* graph,
     vertex_array_reserve(initial_vertices, 1);
     initial_vertices->data[0] = end_vertex;
 
-    hashmap_init(out_map, 1, u32vertices_destroyer);
+    hashmap_init(out_map, 0, u32vertices_destroyer);
     hashmap_put(out_map, 0, initial_vertices);
 
     for (size_t i = 0; i< vertex_len; i++) {
         visited[i] = false;
     }
 
+    // Coloca todos los caminos posibles en una lista de
+    // secuencia
     for (size_t i_wave = final_wave; i_wave > 0; i_wave--) {
+        // la nueva lita generada
         u32vertices_map new_map = {};
         hashmap_init(&new_map, hashmap_size(out_map), u32vertices_destroyer);
 
@@ -416,7 +426,9 @@ void graph_short_path(struct graph* graph,
         struct hashmap_iterator it = {};
         hashmap_iterator_init(&it, out_map);
         for (struct map_entry entry; hashmap_iterator_next(&it, &entry);) {
+            // top es la secuencia modelo para futuros caminos
             struct vertex_array* top = entry.value;
+            // el nuevo vertice final
             vertex_t next_end_vertex = top->data[top->len - 1];
 
             vertex_t* actual_waves = &waves[i_wave * vertex_len];
@@ -427,16 +439,21 @@ void graph_short_path(struct graph* graph,
 
                 visited[i_vertex] = true;
 
+                // clona la secuencia modelo en una nueva
                 struct vertex_array* top_clone = calloc(1, sizeof(struct vertex_array));
                 vertex_array_clone(top, top_clone);
 
+                // añade el vertice al final de la secuencia
                 vertex_array_reserve(top_clone, 1);
                 top_clone->data[top_clone->len - 1] = i_vertex;
 
+                // coloca la nueva secuencia en la nueva lista
                 hashmap_put(&new_map, next_key++, top_clone);
             }
         }
 
+        // elimina la vieja lista y se cambia por la nueva
+        // lista que se ha generado
         hashmap_destroy(out_map);
         memcpy(out_map, &new_map, sizeof(u32vertices_map));
     }
