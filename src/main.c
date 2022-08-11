@@ -75,6 +75,11 @@ static void on_menu(struct graph* graph) {
         int option = 0;
         scanf("%d", &option);
 
+        // solo si se cerró la entrada estandar
+        if (feof(stdin)) {
+            option = 6;
+        }
+
         switch (option) {
             case 1: {
                 graph_print(graph);
@@ -164,8 +169,15 @@ static void on_menu(struct graph* graph) {
 
         if (running) {
             printf("\nPulse enter para continuar");
-            fgetc(stdin);
-            fgetc(stdin);
+
+            int key = 0;
+            for (int lines = 0; key != EOF && lines < 2;) {
+                key = fgetc(stdin);
+
+                if (key == '\r' || key == '\n') {
+                    lines++;
+                }
+            }
         }
     }
 }
