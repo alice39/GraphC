@@ -239,13 +239,13 @@ bool hashmap_iterator_next(struct hashmap_iterator* it, struct map_entry* out_en
         return false;
     }
 
-    const struct hashmap_node* node = it->node;
-    if (node != NULL) {
-        it->node = node->next;
+    const struct hashmap_node* it_node = it->node;
+    if (it_node != NULL) {
+        it->node = it_node->next;
         it->found_size++;
 
         if (out_entry != NULL) {
-            memcpy(out_entry, &node->entry, sizeof(struct map_entry));
+            memcpy(out_entry, &it_node->entry, sizeof(struct map_entry));
         }
 
         return true;
