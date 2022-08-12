@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <graph.h>
+#include <list.h>
 
 /**
  * Devuelve el valor que identifica que no hay un vinculo en
@@ -495,6 +496,64 @@ void graph_minimal_path(struct graph* graph,
     hashmap_init(out_map, 0, u32path_destroyer);
 }
 
+void gwave_init(struct gwave* wave, struct gwave* parent, vertex_t vertex) {
+    if (wave == NULL) {
+        return;
+    }
+
+    wave->parent = parent;
+    wave->depth = parent != NULL ? parent->depth + 1 : 0; 
+    wave->vertex = vertex;
+    list_init(&wave->subwaves, gwave_destroyer);
+}
+
+struct gwave* gwave_add(struct gwave* wave, vertex_t vertex) {
+    if (wave == NULL) {
+        return NULL;
+    }
+
+    // verifica si ya hay uno existente para evitar
+    // duplicados
+    struct gwave* found = gwave_get(wave, vertex);
+    if (found != NULL) {
+        return found;
+    }
+
+    struct gwave* next_wave = calloc(1, sizeof(struct gwave));
+    gwave_init(next_wave, wave, vertex);
+
+    list_add_last(&wave->subwaves, next_wave);
+
+    return next_wave;
+}
+
+struct gwave* gwave_get(struct gwave* wave, vertex_t vertex) {
+    if (wave == NULL) {
+        return NULL;
+    }
+
+    struct list_node* node = wave->subwaves.head;
+    for (; node != NULL; node = node->next) {
+        struct gwave* value = node->data;
+        if (value->vertex == vertex) {
+            return value;
+        }
+    }
+
+    return NULL;
+}
+
+void gwave_destroy(struct gwave* wave) {
+    if (wave == NULL) {
+        return;
+    }
+
+    wave->parent = NULL;
+    wave->depth = 0;
+    wave->vertex = 0;
+    list_destroy(&wave->subwaves);
+}
+
 void gcomponent_destroy(struct gcomponent* comp) {
     if (comp == NULL) {
         return;
@@ -545,6 +604,11 @@ void gpath_destroy(struct gpath* path) {
 
     vertex_array_destroy(&path->vertices);
     path->weight = 0;
+}
+
+void gwave_destroyer(void* wave) {
+    gwave_destroy(wave);
+    free(wave);
 }
 
 void u32path_destroyer(void* path) {
