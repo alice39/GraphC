@@ -50,6 +50,12 @@ struct list {
  * @see struct list
  */
 typedef struct list queue_t;
+/**
+ * El tipo de dato que representa una Pila.
+ *
+ * @see struct list
+ */
+typedef struct list stack_t;
 
 /**
  * Inicializa una lita enlazada.
@@ -146,6 +152,55 @@ static inline void queue_add(queue_t* queue, void* data) {
  */
 static inline void* queue_del(queue_t* queue) {
     return list_del_head(queue);
+}
+
+/**
+ * Inicializa una pila.
+ *
+ * @param stack la pila a inicializar
+ * @param destroyer destructor de valores, puede ser NULL
+ */
+static inline void stack_init(stack_t* stack, lfree_t destroyer) {
+    list_init(stack, destroyer);
+}
+
+/**
+ * Verifica si la pila está vacia.
+ *
+ * @param stack la pila a verificar
+ * @return true si está vacia, falso lo contrario
+ */
+static inline bool stack_empty(stack_t* stack) {
+    return list_empty(stack);
+}
+
+/**
+ * Destroye una pila ya inicializada.
+ *
+ * @param stack la pila a destruir
+ */
+static inline void stack_destroy(stack_t* stack) {
+    list_destroy(stack);
+}
+
+/**
+ * Añade un elemento encima de la pila.
+ *
+ * @param stack la pila en donde se añadirá
+ * @param data el eleme
+ */
+static inline void stack_push(stack_t* stack, void* data) {
+    list_add_last(stack, data);
+}
+
+/**
+ * Quita el elemento encima de la pila.
+ *
+ * @param stack la pila a quitar el elemento
+ * @return el elemento que tenía
+ */
+static inline void* stack_pop(stack_t* stack) {
+    return list_del_last(stack);
 }
 
 #endif // ED_STACK_GUARD_HEADER
