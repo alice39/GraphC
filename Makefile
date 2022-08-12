@@ -1,4 +1,4 @@
-GCC = gcc --std=gnu99 -O2 -Wall -Wextra
+GCC = gcc -g --std=gnu99 -O2 -Wall -Wextra -Wshadow -Wcast-align -fsanitize={address,undefined}
 INCLUDE = -Iinclude
 LINKS = 
 
