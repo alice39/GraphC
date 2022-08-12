@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "list.h"
 #include "map.h"
 #include "vertex.h"
 
@@ -13,6 +14,28 @@
  * dos vertices.
  */
 #define NONE_WEIGHT32_VALUE INT32_MAX
+
+/**
+ * Representa una lista enlazada de struct gwave;
+ */
+typedef struct list gwave_list;
+
+/**
+ * Representa una onda de un grafo.
+ *
+ * @member parent la onda anterior, NULL si no hay
+ * @member depth la profundidad de la onda
+ * @member vertex el vertice de esta onda
+ * @member subwaves los sub-ondas existentes
+ */
+struct gwave {
+    struct gwave* parent;
+
+    size_t depth;
+    vertex_t vertex;
+
+    gwave_list subwaves;
+};
 
 /**
  * Representa las diferentes componentes conexas de un grafo.
@@ -258,6 +281,40 @@ void graph_minimal_path(struct graph* graph,
                         u32path_map* out_map);
 
 /**
+ * Inicializa una onda.
+ *
+ * @param wave la onda a inicializar
+ * @param parent la onda anterior, NULL si no hay
+ * @param vertex el vertice de esta onda
+ */
+void gwave_init(struct gwave* wave, struct gwave* parent, vertex_t vertex);
+/**
+ * Destroye una onda inicializada.
+ *
+ * @param wave la onda a destruir
+ */
+void gwave_destroy(struct gwave* wave);
+
+/**
+ * Añade un vertice a la onda.
+ *
+ * Si se intenta añadir un vertice dos veces, se ignorará.
+ *
+ * @param wave la onda donde se añadira el vertice
+ * @param vertex el vertice a añadir
+ * @return la onda del vertice que fue añadida
+ */
+struct gwave* gwave_add(struct gwave* wave, vertex_t vertex);
+/**
+ * Regresa la onda de un vertice.
+ *
+ * @param wave la onda en donde está el vertice
+ * @param vertex el vertice a buscar
+ * @return la onda del vertice, NULL si no existe
+ */
+struct gwave* gwave_get(struct gwave* wave, vertex_t vertex);
+
+/**
  * Destruye un componente ya inicializado.
  *
  * @param comp el componente a destruir
@@ -271,6 +328,12 @@ void gcomponent_destroy(struct gcomponent* comp);
  */
 void gpath_destroy(struct gpath* path);
 
+/**
+ * El destructor del gwave para los tipos de datos.
+ *
+ * @param wave la onda
+ */
+void gwave_destroyer(void* wave);
 /**
  * El destructor del hashmap de u32path_map.
  *
