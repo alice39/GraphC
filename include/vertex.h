@@ -2,8 +2,10 @@
 #define ED_VERTEX_GUARD_HEADER
 
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "map.h"
+#include "list.h"
 
 #define VERTEX_T_MAX SIZE_MAX
 
@@ -22,6 +24,15 @@ typedef size_t vertex_t;
  * @see u32vertices_destroyer
  */
 typedef struct hashmap u32vertices_map;
+
+/**
+ * Representa una cola que almacena vertex_t.
+ *
+ * @member internal la cola usada internamente
+ */
+struct queue_vertex {
+    queue_t internal;
+};
 
 /**
  * Representa una secuencia/lista de vertices.
@@ -73,6 +84,74 @@ void vertex_array_backwards(struct vertex_array* array);
  * @param array la secuencia a destruir
  */
 void vertex_array_destroy(struct vertex_array* array);
+
+/**
+ * Inicializa una cola de vertex_t.
+ * 
+ * @param queue la cola a inicializar
+ */
+static inline void queue_vertex_init(struct queue_vertex* queue) {
+    queue_init(&queue->internal, free);
+}
+
+/**
+ * Verifica si la cola no está vacia.
+ *
+ * @param queue la cola a verificar
+ * @return si no está vacia
+ */
+static inline bool queue_vertex_empty(struct queue_vertex* queue) {
+    return queue_empty(&queue->internal);
+}
+
+/**
+ * Regresa el tamaño actual de la cola.
+ *
+ * @param queue la cola a saber el tamaño
+ * @return el tamaño de la cola
+ */
+static inline size_t queue_vertex_size(struct queue_vertex* queue) {
+    return queue->internal.size;
+}
+
+/**
+ * Destruye ya una cola inicializada.
+ *
+ * @param queue la cola a destruir
+ */
+static inline void queue_vertex_destroy(struct queue_vertex* queue) {
+    queue_destroy(&queue->internal);
+}
+
+/**
+ * Añade un vertice a la cola.
+ *
+ * @param queue la cola a añadir el vertice
+ * @param vertex el vertice a añadir
+ */
+static inline void queue_vertex_add(struct queue_vertex* queue, vertex_t vertex) {
+    vertex_t* vertex_ptr = malloc(sizeof(vertex_t));
+    *vertex_ptr = vertex;
+
+    queue_add(&queue->internal, vertex_ptr);
+}
+
+/**
+ * Extrae un vertice de la cola.
+ *
+ * @param queue la cola a extraer el vertice
+ * @return el vertice, VERTEX_T_MAX si la cola está vacia
+ */
+static inline vertex_t queue_vertex_del(struct queue_vertex* queue) {
+    vertex_t* vertex_ptr = queue_del(&queue->internal);
+    if (vertex_ptr == NULL) {
+        return VERTEX_T_MAX;
+    }
+
+    vertex_t vertex = *vertex_ptr;
+    free(vertex_ptr);
+    return vertex;
+}
 
 /**
  * El destructor del hashmap de u32vertices_map.
