@@ -312,7 +312,7 @@ void graph_components(struct graph* graph, const struct gcomponent** out_comp) {
 
         // añade el vertice al final de la secuencia
         vertex_array_reserve(arr, 1);
-        arr->data[arr->len - 1] = i;
+        arr->data[arr->len++] = i;
     }
 
     if (out_comp != NULL) {
