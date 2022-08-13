@@ -553,17 +553,3 @@ static void g_invalidate_cache(struct graph* graph) {
     graph->cache.component = NULL;
 }
 
-void gpath_destroy(struct gpath* path) {
-    if (path == NULL) {
-        return;
-    }
-
-    vertex_array_destroy(&path->vertices);
-    path->weight = 0;
-}
-
-void u32path_destroyer(void* path) {
-    gpath_destroy(path);
-    free(path);
-}
-
