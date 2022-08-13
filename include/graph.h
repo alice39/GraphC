@@ -9,6 +9,7 @@
 #include "map.h"
 
 #include "vertex.h"
+#include "wave.h"
 #include "path.h"
 
 /**
@@ -166,6 +167,22 @@ size_t graph_rcount(const struct graph* graph, vertex_t vi);
  */
 size_t graph_ccount(const struct graph* graph, vertex_t wj); 
 
+/**
+ * Genera las ondas desde un vertice de origen hasta un posible
+ * vertice final.
+ *
+ * @param graph el grafo donde se generarán las ondas
+ * @param start_vertex el vertice de origen
+ * @param end_vertex el vertice final, VERTEX_T_MAX si ninguno
+ * @param should_duplicate si existen vertices en el que están
+ *                         conectados entre si.
+ * @param out_wave las ondas generadas
+ */
+void graph_wave(const struct graph* graph,
+                vertex_t start_vertex,
+                vertex_t end_vertex,
+                bool should_duplicate,
+                struct wave* out_wave);
 /**
  * Evalua las componentes conexas que existen en el grafo.
  *

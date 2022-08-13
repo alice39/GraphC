@@ -195,6 +195,78 @@ size_t graph_ccount(const struct graph* graph, vertex_t wj) {
     return count;
 }
 
+void graph_wave(const struct graph* graph,
+                vertex_t start_vertex,
+                vertex_t end_vertex,
+                bool should_duplicate,
+                struct wave* out_wave) {
+    if (g_is_out(graph, start_vertex, 0) || out_wave == NULL) {
+        return;
+    }
+
+    // inicializa la onda con el vertice de partida
+    wave_init(out_wave, NULL, start_vertex);
+
+    size_t vertex_len = graph->len;
+
+    bool* visited = calloc(vertex_len, sizeof(bool));
+    bool* inter_visited = calloc(vertex_len, sizeof(bool));
+
+    vtwave_map wave_track = {};
+    hashmap_init(&wave_track, 0, NULL);
+    hashmap_put(&wave_track, start_vertex, out_wave);
+
+    struct queue_vertex wave_queue = {};
+    queue_vertex_init(&wave_queue);
+    queue_vertex_add(&wave_queue, start_vertex);
+
+    bool found_vertex = false;
+
+    while (!queue_vertex_empty(&wave_queue)) {
+        size_t repeat_size = 1;
+
+        if (should_duplicate) {
+            repeat_size = queue_vertex_size(&wave_queue);
+        }
+
+        while (repeat_size > 0) {
+            repeat_size--;
+
+            vertex_t i = queue_vertex_del(&wave_queue);
+            visited[i] = true;
+
+            struct wave* wave = hashmap_get(&wave_track, i);
+
+            for (vertex_t j = 0; j < vertex_len; j++) {
+                if (visited[j] || !graph_has(graph, i, j)) {
+                    continue;
+                }
+
+                inter_visited[j] = true;
+                hashmap_put(&wave_track, j, wave_add(wave, j));
+
+                found_vertex |= j == end_vertex;
+                if (found_vertex) {
+                    continue;
+                }
+
+                queue_vertex_add(&wave_queue, j);
+            }
+        };
+
+        for (size_t i = 0; i < vertex_len; i++) {
+            visited[i] |= inter_visited[i];
+            inter_visited[i] = false;
+        }
+    }
+    
+    free(visited); 
+    free(inter_visited);
+
+    hashmap_destroy(&wave_track);
+    queue_vertex_destroy(&wave_queue);
+}
+
 void graph_components(struct graph* graph, const struct gcomponent** out_comp) {
     if (graph == NULL) {
         return;
