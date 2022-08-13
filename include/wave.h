@@ -5,6 +5,7 @@
 
 #include "list.h"
 #include "vertex.h"
+#include "map.h"
 
 /**
  * Representa una lista enlazada de struct wave;
@@ -27,6 +28,13 @@ struct wave {
 
     wave_list subwaves;
 };
+
+/**
+ * Representa un HashMap con llave vertex_t y valor struct wave.
+ *
+ * @see wave_destroyer
+ */
+typedef struct hashmap vtwave_map;
 
 /**
  * Inicializa una onda.
