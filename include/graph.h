@@ -237,13 +237,15 @@ void graph_short_path(struct graph* graph,
  *      no podrá existir un camino que una ambos vertices.
  *   2. Se define el camino más débil; como la sumatoria
  *      del peso de los vinculos (arcos) la más minima posible.
- *   3. Pueden existir varios caminos en el que son
- *      equivalentemente débil, por lo que serán incluidos.
+ *   3. Se almacenará todos los caminos debiles hasta llegar
+ *      a vertice final, todos si VERTEX_T_MAX está presente
  *
  * @param graph el grafo para evaluar el camino más débil
  * @param start_vertex el vertice de partida
- * @param end_vertex el vertice de destino
- * @param out_map donde se guardarán los caminos encontrados
+ * @param end_vertex el vertice de destino, VERTEX_T_MAX
+ *                   si no hay
+ * @param out_map donde se guardarán todos los caminos
+ *                debiles encontrados
  */
 void graph_minimal_path(struct graph* graph,
                         vertex_t start_vertex,
