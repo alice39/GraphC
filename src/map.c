@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "map.h"
+#include <map.h>
 
 /**
  * Convierte la llave de un HashMap en un index de un bucket.
