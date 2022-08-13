@@ -31,8 +31,8 @@ void wave_print(struct wave* wave) {
         }
         printf("%lu\n", pop_wave->vertex + 1);
 
-        struct list_node* node = pop_wave->subwaves.head;
-        for (; node != NULL; node = node->next) {
+        struct list_node* node = pop_wave->subwaves.last;
+        for (; node != NULL; node = node->back) {
             stack_push(&wave_stack, node->data);
         }
     }
