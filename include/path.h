@@ -34,11 +34,12 @@ struct path {
 typedef struct hashmap u32path_map;
 
 /**
- * Inicializa un camino con valores por defecto.
+ * Inicializa un camino con los vertices que lo componen.
  *
  * @param path la ruta a inicializar
+ * @param vertices los vertices del camino
  */
-void path_zinit(struct path* path);
+void path_init(struct path* path, struct vertex_array* vertices);
 /**
  *  Destruye un camino ya inicializado.
  *
