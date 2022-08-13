@@ -1,6 +1,11 @@
-GCC = gcc -g --std=gnu99 -O2 -Wall -Wextra -Wshadow -Wcast-align -fsanitize={address,undefined}
+GCC = gcc
 INCLUDE = -Iinclude
 LINKS = 
+
+CFLAGS = --std=gnu99 -O2
+
+# Debug flags
+# CFLAGS = $(CFLAGS) -g -Wall -Wextra -Wshadow -Wcast-align -fsanitize={address,undefined}
 
 INC = $(shell find include/ -type f -name '*.h')
 SRC = $(shell find src/ -type f -name '*.c' ! -name 'main.c')
@@ -17,17 +22,17 @@ build: $(OBJ)
 build/bin/main: src/main.c $(OBJ) 
 	@mkdir -p "$(@D)"
 	@echo Compiling "$<"
-	@$(GCC) "$<" $(OBJ) -o "$@" $(INCLUDE) $(LINKS)
+	@$(GCC) $(CFLAGS) "$<" $(OBJ) -o "$@" $(INCLUDE) $(LINKS)
 
 build/bin/%: test/%.c $(OBJ)
 	@mkdir -p "$(@D)"
 	@echo Compiling "$<"
-	@$(GCC) "$<" $(OBJ) -o "$@" $(INCLUDE) $(LINKS)
+	@$(GCC) $(CFLAGS) "$<" $(OBJ) -o "$@" $(INCLUDE) $(LINKS)
 
 build/obj/%.o: src/%.c
 	@mkdir -p "$(@D)"
 	@echo Compiling "$<"
-	@$(GCC) -c "$<" -o "$@" $(INCLUDE) $(LINKS)
+	@$(GCC) $(CFLAGS) -c "$<" -o "$@" $(INCLUDE) $(LINKS)
 
 clear:
 	@rm -rf build
