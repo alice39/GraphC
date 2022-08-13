@@ -191,7 +191,7 @@ static void on_menu(struct graph* graph) {
 
                         if (vertices->len == depth) {
                             if (is_unlinked) {
-                                printf("\n%lu vínculo de distancia:\n", depth);
+                                printf("\n %lu vínculo de distancia:\n  ", depth);
                             } else {
                                 printf(", ");
                             }
@@ -225,6 +225,7 @@ static void on_menu(struct graph* graph) {
 
                 struct path* path = hashmap_get(&minimal_paths, w - 1);
                 if (path != NULL) {
+                    printf(" ");
                     vertex_array_print(&path->vertices);
                     printf(": %d\n", path->weight);
                 }
