@@ -87,3 +87,8 @@ void wave_destroy(struct wave* wave) {
     list_destroy(&wave->subwaves);
 }
 
+void wave_destroyer(void* wave) {
+    wave_destroy(wave);
+    free(wave);
+}
+
