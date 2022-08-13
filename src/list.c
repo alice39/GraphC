@@ -53,6 +53,8 @@ void list_add_head(struct list* list, void* data) {
     new_node->next = list->head;
     new_node->back = NULL;
 
+    list->size++;
+
     if (list->head == NULL) {
         list->head = new_node;
         list->last = new_node;
@@ -72,6 +74,8 @@ void list_add_last(struct list* list, void* data) {
     new_node->data = data;
     new_node->next = NULL;
     new_node->back = list->last;
+    
+    list->size++;
 
     if (list->last == NULL) {
         list->head = new_node;
@@ -89,6 +93,7 @@ void* list_del_head(struct list* list) {
     }
     
     void* data = list->head->data;
+    list->size--;
 
     if (list->head == list->last) {
         free(list->head);
@@ -111,6 +116,7 @@ void* list_del_last(struct list* list) {
     }
     
     void* data = list->last->data;
+    list->size--;
 
     if (list->head == list->last) {
         free(list->last);
