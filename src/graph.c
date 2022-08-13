@@ -210,8 +210,13 @@ void graph_wave(const struct graph* graph,
     size_t vertex_len = graph->len;
 
     bool* visited = calloc(vertex_len, sizeof(bool));
+    // inter_visited es usado para poder duplicar los
+    // vertices si hay varios vertices inter-conectados
+    // entre si
     bool* inter_visited = calloc(vertex_len, sizeof(bool));
 
+    // permite localizar que onda pertene un vertice de forma
+    // rápida y eficiente
     vtwave_map wave_track = {};
     hashmap_init(&wave_track, 0, NULL);
     hashmap_put(&wave_track, start_vertex, out_wave);
@@ -220,6 +225,7 @@ void graph_wave(const struct graph* graph,
     queue_vertex_init(&wave_queue);
     queue_vertex_add(&wave_queue, start_vertex);
 
+    // para evitar de añadir mas vertices innecesarios
     bool found_vertex = false;
 
     while (!queue_vertex_empty(&wave_queue)) {
@@ -243,9 +249,16 @@ void graph_wave(const struct graph* graph,
                 }
 
                 inter_visited[j] = true;
+
+                // añade el vertice j como la subonda del
+                // vertice i, de misma forma se añade la
+                // onda generada del vertice j en el mapa
                 hashmap_put(&wave_track, j, wave_add(wave, j));
 
                 found_vertex |= j == end_vertex;
+
+                // si ya se encontró el vertice final
+                // ya no es necesario encolar más vertices
                 if (found_vertex) {
                     continue;
                 }
