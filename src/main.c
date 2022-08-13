@@ -169,7 +169,7 @@ static void on_menu(struct graph* graph) {
                 struct wave root_wave = {};
                 graph_wave(graph, v - 1, VERTEX_T_MAX, false, &root_wave);
 
-                u32vertices_map paths = {};
+                u32path_map paths = {};
                 wave_to_path(&root_wave, &paths);
 
                 const struct gcomponent* comp = {0};
@@ -185,15 +185,17 @@ static void on_menu(struct graph* graph) {
                     bool is_unlinked = true;
 
                     for (struct map_entry entry; hashmap_iterator_next(&it, &entry);) {
-                        struct vertex_array* path = entry.value;
-                        if (path->len == depth) {
+                        struct path* path = entry.value;
+                        struct vertex_array* vertices = &path->vertices;
+
+                        if (vertices->len == depth) {
                             if (is_unlinked) {
                                 printf("\n%lu vínculo de distancia:\n", depth);
                             } else {
                                 printf(", ");
                             }
 
-                            vertex_array_print(path);
+                            vertex_array_print(vertices);
                             is_unlinked = false;
                         }
                     }

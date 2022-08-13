@@ -81,7 +81,7 @@ void wave_to_path(struct wave* wave, u32path_map* out_map) {
         return;
     }
 
-    hashmap_init(out_map, 0, u32vertices_destroyer);
+    hashmap_init(out_map, 0, u32path_destroyer);
     mkey_t next_key = 0;
 
     stack_t stack = {};
@@ -98,8 +98,11 @@ void wave_to_path(struct wave* wave, u32path_map* out_map) {
         model.data[pop_wave->depth - root_depth] = pop_wave->vertex;
         model.len = pop_wave->depth - root_depth + 1;
 
-        struct vertex_array* path = calloc(1, sizeof(struct vertex_array));
-        vertex_array_clone(&model, path);
+        struct vertex_array vertices = {};
+        vertex_array_clone(&model, &vertices);
+
+        struct path* path = calloc(1, sizeof(struct path));
+        path_init(path, &vertices);
         hashmap_put(out_map, next_key++, path);
 
         struct list_node* node = pop_wave->subwaves.last;
@@ -111,7 +114,7 @@ void wave_to_path(struct wave* wave, u32path_map* out_map) {
     vertex_array_destroy(&model);
 
     // quitamos el camino raiz o el camino con 1 vinculo
-    u32vertices_destroyer(hashmap_del(out_map, 0));
+    u32path_destroyer(hashmap_del(out_map, 0));
 }
 
 void wave_destroy(struct wave* wave) {
