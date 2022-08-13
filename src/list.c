@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include <list.h>
+#include "../include/list.h"
 
 void list_init(struct list* list, lfree_t destroyer) {
     if (list == NULL) {

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <graph.h>
+#include "../include/graph.h"
 
 /**
  * Lee desde un archivo los datos de un grafo.

@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "path.h"
+#include "../include/path.h"
 
 void path_init(struct path* path, struct vertex_array* vertices) {
     if (path == NULL) {

@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <graph.h>
-#include <list.h>
+#include "../include/graph.h"
+#include "../include/list.h"
 
 /**
  * Devuelve el valor que identifica que no hay un vinculo en

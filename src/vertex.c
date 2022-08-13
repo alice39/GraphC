@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <vertex.h>
+#include "../include/vertex.h"
 
 void vertex_array_from(struct vertex_array* array, const vertex_t* data, size_t len) {
     if (array == NULL || data == NULL) {

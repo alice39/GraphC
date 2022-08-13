@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <wave.h>
+#include "../include/wave.h"
 
 void wave_init(struct wave* wave, struct wave* parent, vertex_t vertex) {
     if (wave == NULL) {
