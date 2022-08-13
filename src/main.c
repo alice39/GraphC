@@ -68,8 +68,9 @@ static void on_menu(struct graph* graph) {
         printf(" 2) Componentes conexas\n");
         printf(" 3) Alcanzabilidad de dos vertices\n");
         printf(" 4) Camino corto de dos vertices\n");
-        printf(" 5) Camino debil de dos vertices\n");
-        printf(" 6) Salir\n");
+        printf(" 5) Camino corto de un vertice con todos los demás\n");
+        printf(" 6) Camino debil de dos vertices\n");
+        printf(" 7) Salir\n");
         printf("Opción: ");
 
         int option = 0;
@@ -156,9 +157,60 @@ static void on_menu(struct graph* graph) {
                 break;
             }
             case 5: {
+                printf("Ingrese el vertice: ");
+
+                vertex_t v = 0;
+                scanf("%lu", &v);
+
+                if (v - 1 >= graph->len) {
+                    break;
+                }
+
+                struct wave root_wave = {};
+                graph_wave(graph, v - 1, VERTEX_T_MAX, false, &root_wave);
+
+                u32vertices_map paths = {};
+                wave_to_path(&root_wave, &paths);
+
+                const struct gcomponent* comp = {0};
+                graph_components(graph, &comp);
+                
+                struct vertex_array* members = hashmap_get(&comp->map, comp->array.data[v - 1]);
+                size_t max_depth = members != NULL ? members->len : 0;
+
+                for (size_t depth = 2; depth <= max_depth; depth++) {
+                    struct hashmap_iterator it = {};
+                    hashmap_iterator_init(&it, &paths);
+
+                    bool is_unlinked = true;
+
+                    for (struct map_entry entry; hashmap_iterator_next(&it, &entry);) {
+                        struct vertex_array* path = entry.value;
+                        if (path->len == depth) {
+                            if (is_unlinked) {
+                                printf("\n%lu vínculo de distancia:\n", depth);
+                            } else {
+                                printf(", ");
+                            }
+
+                            vertex_array_print(path);
+                            is_unlinked = false;
+                        }
+                    }
+                    
+                    if (!is_unlinked) {
+                        printf("\n");
+                    }
+                }
+
+                hashmap_destroy(&paths);
+                wave_destroy(&root_wave);
                 break;
             }
             case 6: {
+                break;
+            }
+            case 7: {
                 running = false;
                 break;
             }
