@@ -48,20 +48,6 @@ void vertex_array_clone(const struct vertex_array* array, struct vertex_array* o
     memcpy(out->data, array->data, sizeof(vertex_t) * array->len);
 }
 
-void vertex_array_backwards(struct vertex_array* array) {
-    if (array == NULL) {
-        return;
-    }
-
-    for (size_t i = 0; i < array->len / 2; i++) {
-        size_t mirror_i = array->len - i - 1;
-
-        vertex_t swap = array->data[i];
-        array->data[i] = array->data[mirror_i];
-        array->data[mirror_i] = swap;
-    }
-}
-
 void vertex_array_print(struct vertex_array* array) {
     if (array == NULL || array->len == 0) {
         return;

@@ -76,12 +76,6 @@ void vertex_array_reserve(struct vertex_array* array, size_t capacity);
  */
 void vertex_array_clone(const struct vertex_array* array, struct vertex_array* out);
 /**
- * Coloca los elementos de la secuencia en orden reverso.
- *
- * @param array la secuencia a modidificar el orden
- */
-void vertex_array_backwards(struct vertex_array* array);
-/**
  * Imprime una secuencia de vertices.
  *
  * @param array la secuencia a imprimir
