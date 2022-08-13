@@ -34,6 +34,12 @@ struct path {
 typedef struct hashmap u32path_map;
 
 /**
+ * Inicializa un camino con valores por defecto.
+ *
+ * @param path la ruta a inicializar
+ */
+void path_zinit(struct path* path);
+/**
  *  Destruye un camino ya inicializado.
  *
  *  @param path el camino destruir
