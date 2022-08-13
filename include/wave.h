@@ -4,8 +4,10 @@
 #include <stdint.h>
 
 #include "list.h"
-#include "vertex.h"
 #include "map.h"
+
+#include "vertex.h"
+#include "path.h"
 
 /**
  * Representa una lista enlazada de struct wave;
@@ -75,6 +77,14 @@ struct wave* wave_add(struct wave* wave, vertex_t vertex);
  * @return la onda del vertice, NULL si no existe
  */
 struct wave* wave_get(struct wave* wave, vertex_t vertex);
+
+/**
+ * Convierte una onda en todos los caminos posibles.
+ *
+ * @param wave la onda a convertir
+ * @param out_map los caminos generados
+ */
+void wave_to_path(struct wave* wave, u32path_map* out_map);
 
 /**
  * El destructor del wave para los tipos de datos.

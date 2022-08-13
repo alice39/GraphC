@@ -76,6 +76,44 @@ struct wave* wave_get(struct wave* wave, vertex_t vertex) {
     return NULL;
 }
 
+void wave_to_path(struct wave* wave, u32path_map* out_map) {
+    if (wave == NULL || out_map == NULL) {
+        return;
+    }
+
+    hashmap_init(out_map, 0, u32vertices_destroyer);
+    mkey_t next_key = 0;
+
+    stack_t stack = {};
+    stack_init(&stack, NULL);
+    stack_push(&stack, wave);
+
+    size_t root_depth = wave->depth;
+    struct vertex_array model = {};
+
+    while (!stack_empty(&stack)) {
+        struct wave* pop_wave = stack_pop(&stack);
+
+        vertex_array_reserve(&model, 1);
+        model.data[pop_wave->depth - root_depth] = pop_wave->vertex;
+        model.len = pop_wave->depth - root_depth + 1;
+
+        struct vertex_array* path = calloc(1, sizeof(struct vertex_array));
+        vertex_array_clone(&model, path);
+        hashmap_put(out_map, next_key++, path);
+
+        struct list_node* node = pop_wave->subwaves.last;
+        for (; node != NULL; node = node->back) {
+            stack_push(&stack, node->data);
+        }
+    }
+
+    vertex_array_destroy(&model);
+
+    // quitamos el camino raiz o el camino con 1 vinculo
+    u32vertices_destroyer(hashmap_del(out_map, 0));
+}
+
 void wave_destroy(struct wave* wave) {
     if (wave == NULL) {
         return;
