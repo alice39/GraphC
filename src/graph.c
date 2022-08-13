@@ -450,7 +450,10 @@ void graph_minimal_path(struct graph* graph,
                           vertex_t start_vertex,
                           vertex_t end_vertex,
                           u32path_map* out_map) {
-    if (out_map == NULL || !g_initial_path(graph, start_vertex, end_vertex)) {
+    if (out_map == NULL) {
+        return;
+    }
+    if (end_vertex != VERTEX_T_MAX && !g_initial_path(graph, start_vertex, end_vertex)) {
         return;
     }
 
@@ -460,21 +463,86 @@ void graph_minimal_path(struct graph* graph,
         return;
     }
 
-    hashmap_init(out_map, 0, u32path_destroyer);
-
     size_t vertex_len = graph->len;
-    uint32_t* vertex_costs = malloc(sizeof(uint32_t) * vertex_len);
+
+    bool* visited = calloc(vertex_len, sizeof(bool));
+    struct path* minimal_paths = calloc(vertex_len, sizeof(struct path));
 
     // inicializa con un costo invalido (el mayor posible/infinito)
-    for (size_t i = 1; i < vertex_len; i++) {
-        vertex_costs[i] = UINT32_MAX;
+    for (size_t i = 0; i < vertex_len; i++) {
+        struct path* path = &minimal_paths[i];
+
+        path_init(path, NULL);
+        path->weight = INT32_MAX;
     }
 
-    for (vertex_t i = 0; i < vertex_len; i++) {
-        for (vertex_t j = 0; j < vertex_len; j++) {
+    struct vertex_array initial_vertex = {};
+    vertex_array_from(&initial_vertex, (vertex_t[1]){start_vertex}, 1);
 
+    struct path* start_path = &minimal_paths[start_vertex];
+    path_init(start_path, &initial_vertex);
+    start_path->weight = 0;
+
+    struct queue_vertex queue = {};
+    queue_vertex_init(&queue);
+    queue_vertex_add(&queue, start_vertex);
+
+    while (!queue_vertex_empty(&queue)) {
+        vertex_t i = queue_vertex_del(&queue);
+        if (i == end_vertex) {
+            continue;
+        }
+
+        visited[i] = true;
+
+        struct path* i_path = &minimal_paths[i];
+
+        struct vertex_array* accumulated_vertices = &i_path->vertices;
+        int32_t accumulated_distance = i_path->weight;
+
+        for (vertex_t j = 0; j < vertex_len; j++) {
+            if (visited[j] || !graph_has(graph, i, j)) {
+                continue;
+            }
+
+            int32_t distance = graph_get(graph, i, j);
+            int32_t absorbed_distance = distance + accumulated_distance;
+
+            struct path* j_path = &minimal_paths[j];
+            if (j_path->weight > absorbed_distance) {
+                struct vertex_array* absorbed_vertices = &j_path->vertices;
+
+                vertex_array_clone(accumulated_vertices, absorbed_vertices);
+                vertex_array_reserve(absorbed_vertices, 1);
+                absorbed_vertices->data[absorbed_vertices->len++] = j;
+
+                j_path->weight = absorbed_distance;
+            }
+
+            queue_vertex_add(&queue, j);
         }
     }
+
+    hashmap_init(out_map, 0, u32path_destroyer);
+
+    for (vertex_t i = 0; i < vertex_len; i++) {
+        struct path* path = &minimal_paths[i];
+        if (path->weight == INT32_MAX) {
+            continue;
+        }
+        if (path->vertices.len == 1) {
+            path_destroy(path);
+            continue;
+        }
+
+        struct path* heap_path = malloc(sizeof(struct path));
+        memcpy(heap_path, path, sizeof(struct path));
+
+        hashmap_put(out_map, i, heap_path);
+    }
+
+    free(visited);
+    free(minimal_paths);
 }
 
 void gcomponent_destroy(struct gcomponent* comp) {
