@@ -82,6 +82,12 @@ void vertex_array_clone(const struct vertex_array* array, struct vertex_array* o
  */
 void vertex_array_backwards(struct vertex_array* array);
 /**
+ * Imprime una secuencia de vertices.
+ *
+ * @param array la secuencia a imprimir
+ */
+void vertex_array_print(struct vertex_array* array);
+/**
  * Elimina toda la información de la secuencia.
  *
  * @param array la secuencia a destruir

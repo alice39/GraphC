@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <vertex.h>
 
@@ -58,6 +59,17 @@ void vertex_array_backwards(struct vertex_array* array) {
         vertex_t swap = array->data[i];
         array->data[i] = array->data[mirror_i];
         array->data[mirror_i] = swap;
+    }
+}
+
+void vertex_array_print(struct vertex_array* array) {
+    if (array == NULL || array->len == 0) {
+        return;
+    }
+
+    printf("%lu", array->data[0] + 1);
+    for (size_t i = 1; i < array->len; i++) {
+        printf("-%lu", array->data[i] + 1);
     }
 }
 
