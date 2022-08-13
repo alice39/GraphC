@@ -70,7 +70,8 @@ static void on_menu(struct graph* graph) {
         printf(" 4) Camino corto de dos vertices\n");
         printf(" 5) Camino corto de un vertice con todos los demás\n");
         printf(" 6) Camino debil de dos vertices\n");
-        printf(" 7) Salir\n");
+        printf(" 7) Camino debil de un vertice con todos los demás\n");
+        printf(" 8) Salir\n");
         printf("Opción: ");
 
         int option = 0;
@@ -210,9 +211,52 @@ static void on_menu(struct graph* graph) {
                 break;
             }
             case 6: {
+                vertex_t v = 0;
+                vertex_t w = 0;
+
+                printf("Ingrese el 1er vertice: ");
+                scanf("%lu", &v);
+                
+                printf("Ingrese el 2do vertice: ");
+                scanf("%lu", &w);
+
+                u32path_map minimal_paths = {};
+                graph_minimal_path(graph, v - 1, w - 1, &minimal_paths);
+
+                struct path* path = hashmap_get(&minimal_paths, w - 1);
+                if (path != NULL) {
+                    vertex_array_print(&path->vertices);
+                    printf(": %d\n", path->weight);
+                }
+
+                hashmap_destroy(&minimal_paths);
                 break;
             }
             case 7: {
+                vertex_t v = 0;
+
+                printf("Ingrese el vertice: ");
+                scanf("%lu", &v);
+                printf("\n");
+
+                u32path_map minimal_paths = {};
+                graph_minimal_path(graph, v - 1, VERTEX_T_MAX, &minimal_paths);
+
+                struct hashmap_iterator path_it = {};
+                hashmap_iterator_init(&path_it, &minimal_paths);
+                for (struct map_entry entry; hashmap_iterator_next(&path_it, &entry);) {
+                    struct path* path = entry.value;
+                    struct vertex_array* vertices = &path->vertices;
+
+                    printf(" %2lu al %2lu:  ", vertices->data[0] + 1, vertices->data[vertices->len - 1] + 1);
+                    vertex_array_print(vertices);
+                    printf(": %d\n", path->weight);
+                }
+
+                hashmap_destroy(&minimal_paths);
+                break;
+            }
+            case 8: {
                 running = false;
                 break;
             }
