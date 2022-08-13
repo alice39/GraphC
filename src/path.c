@@ -1,11 +1,18 @@
+#include <string.h>
+
 #include "path.h"
 
-void path_zinit(struct path* path) {
+void path_init(struct path* path, struct vertex_array* vertices) {
     if (path == NULL) {
         return;
     }
 
-    vertex_array_destroy(&path->vertices);
+    if (vertices != NULL) {
+        memcpy(&path->vertices, vertices, sizeof(struct vertex_array));
+    } else {
+        vertex_array_destroy(&path->vertices);
+    }
+
     path->weight = 0;
 }
 
