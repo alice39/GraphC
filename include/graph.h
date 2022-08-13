@@ -7,7 +7,9 @@
 
 #include "list.h"
 #include "map.h"
+
 #include "vertex.h"
+#include "path.h"
 
 /**
  * Representa el valor en el que en no existe un vinculo de
@@ -36,33 +38,6 @@ struct gcomponent {
 
     u32vertices_map map;
 };
-
-/**
- * Representa un camino de un vertice origen a un vertice
- * destino.
- *
- * @see gpath_destroy
- *
- * @member vertices es la secuencia de vertices (vertex_t) del
- *                  camino
- * @member weight es el peso final que toma el camino desde
- *                el vertice origen hasta el vertice destino
- */
-struct gpath {
-    struct vertex_array vertices;
-    int32_t weight;
-};
-
-/**
- * Representa un HashMap en el que vincula uint32_t (la llave)
- * con un struct gpath (el valor).
- *
- * Visto de otra forma: HashMap<uint32_t, struct gpath>
- *
- * @see hashmap
- * @see u32path_destroyer
- */
-typedef struct hashmap u32path_map;
 
 /** 
  * La representación de un grafo indurecto en una matriz de
@@ -264,19 +239,5 @@ void graph_minimal_path(struct graph* graph,
  * @param comp el componente a destruir
  */
 void gcomponent_destroy(struct gcomponent* comp);
-
-/**
- *  Destruye un camino ya inicializado.
- *
- *  @param path el camino destruir
- */
-void gpath_destroy(struct gpath* path);
-
-/**
- * El destructor del hashmap de u32path_map.
- *
- * @see hashmap#destroyer
- */
-void u32path_destroyer(void* path);
 
 #endif // ED_GRAPH_GUARD_HEADER
