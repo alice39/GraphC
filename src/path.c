@@ -1,5 +1,14 @@
 #include "path.h"
 
+void path_zinit(struct path* path) {
+    if (path == NULL) {
+        return;
+    }
+
+    vertex_array_destroy(&path->vertices);
+    path->weight = 0;
+}
+
 void path_destroy(struct path* path) {
     if (path == NULL) {
         return;
