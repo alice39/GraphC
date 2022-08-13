@@ -34,12 +34,14 @@ struct list_node {
  * @member destroyer la función que destruye el valor
  *                   almacenado en el mapa, puede ser NULL
  *                   si no es necesario
+ * @member size tamaño de la lista
  * @member head el primer nodo de la lista, NULL si no hay
  * @member last el último nodo de la lista, NULL si no hay
  */
 struct list {
     lfree_t destroyer;
 
+    size_t size;
     struct list_node* head;
     struct list_node* last;
 };
