@@ -191,7 +191,7 @@ static void on_menu(struct graph* graph) {
 
                         if (vertices->len == depth) {
                             if (is_unlinked) {
-                                printf("\n %lu vínculo de distancia:\n  ", depth);
+                                printf("\n %lu vínculo de distancia:\n  ", depth - 1);
                             } else {
                                 printf(", ");
                             }
