@@ -418,137 +418,32 @@ void graph_short_path(struct graph* graph,
         return;
     }
 
-    if (start_vertex == end_vertex) {
-        struct vertex_array* path = calloc(1, sizeof(struct vertex_array));
-        vertex_array_from(path, (vertex_t[1]) {start_vertex}, 1);
+    struct wave root_wave = {};
+    graph_wave(graph, start_vertex, end_vertex, true, &root_wave);
 
-        hashmap_init(out_map, 1, u32vertices_destroyer);
-        hashmap_put(out_map, 0, path);
-        return;
-    }
+    u32path_map paths = {};
+    wave_to_path(&root_wave, &paths);
 
-    size_t vertex_len = graph->len;
+    hashmap_init(out_map, hashmap_size(&paths), u32vertices_destroyer);
+    mkey_t next_key = 0;
 
-    bool* visited = calloc(vertex_len, sizeof(bool));
-    vertex_t* waves = malloc(sizeof(vertex_t) * vertex_len * vertex_len);
+    struct hashmap_iterator path_it = {};
+    hashmap_iterator_init(&path_it, &paths);
+    for (struct map_entry entry; hashmap_iterator_next(&path_it, &entry);) {
+        struct path* path = entry.value;
+        struct vertex_array* vertices = &path->vertices;
 
-    // comienza la primera ola con el vertice de partida
-    waves[0] = start_vertex;
-    // inicializa las olas con un vertice invalido
-    for (size_t i = 1; i < vertex_len * vertex_len; i++) {
-        waves[i] = VERTEX_T_MAX;
-    }
-    
-    // indice en que momento la ola terminó
-    size_t final_wave = 0;
-
-    for (size_t i_wave = 0; i_wave < vertex_len - 1; i_wave++) {
-        if (final_wave != 0) {
-            break;
+        if (vertices->data[vertices->len - 1] != end_vertex) {
+            continue;
         }
 
-        size_t j_wave = 0;
-
-        // recorre todos los vertices de la ola actual
-        vertex_t* actual_waves = &waves[i_wave * vertex_len];
-        for (vertex_t i_vertex = *actual_waves; i_vertex != VERTEX_T_MAX; i_vertex = *actual_waves++) {
-            if (final_wave != 0) {
-                break;
-            }
-            visited[i_vertex] = true;
-
-            for (vertex_t j_vertex = 0; j_vertex < vertex_len; j_vertex++) {
-                if (visited[j_vertex] || !graph_has(graph, i_vertex, j_vertex)) {
-                    continue;
-                }
-
-                visited[j_vertex] = true;
-                // añade el vertice para la siguiente ola
-                waves[j_wave + (i_wave + 1) * vertex_len] = j_vertex;
-                j_wave++;
-
-                // si se encontró el vertice final
-                if (j_vertex == end_vertex) {
-                    final_wave = i_wave;
-                    break;
-                }
-            }
-        }
+        struct vertex_array* clone_vertices = calloc(1, sizeof(struct vertex_array));
+        vertex_array_clone(&path->vertices, clone_vertices);
+        hashmap_put(out_map, next_key++, clone_vertices);
     }
 
-    struct vertex_array* initial_vertices = calloc(1, sizeof(struct vertex_array));
-    vertex_array_reserve(initial_vertices, 1);
-    initial_vertices->data[0] = end_vertex;
-
-    hashmap_init(out_map, 0, u32vertices_destroyer);
-    hashmap_put(out_map, 0, initial_vertices);
-
-    for (size_t i = 0; i< vertex_len; i++) {
-        visited[i] = false;
-    }
-
-    // Coloca todos los caminos posibles en una lista de
-    // secuencia
-    for (size_t i_wave = final_wave; i_wave > 0; i_wave--) {
-        // la nueva lita generada
-        u32vertices_map new_map = {};
-        hashmap_init(&new_map, hashmap_size(out_map), u32vertices_destroyer);
-
-        mkey_t next_key = 0;
-
-        struct hashmap_iterator it = {};
-        hashmap_iterator_init(&it, out_map);
-        for (struct map_entry entry; hashmap_iterator_next(&it, &entry);) {
-            // top es la secuencia modelo para futuros caminos
-            struct vertex_array* top = entry.value;
-            // el nuevo vertice final
-            vertex_t next_end_vertex = top->data[top->len - 1];
-
-            vertex_t* actual_waves = &waves[i_wave * vertex_len];
-            for (vertex_t i_vertex = *actual_waves; i_vertex != VERTEX_T_MAX; i_vertex = *actual_waves++) {
-                if (visited[i_vertex] || !graph_has(graph, i_vertex, next_end_vertex)) {
-                    continue;
-                }
-
-                visited[i_vertex] = true;
-
-                // clona la secuencia modelo en una nueva
-                struct vertex_array* top_clone = calloc(1, sizeof(struct vertex_array));
-                vertex_array_clone(top, top_clone);
-
-                // añade el vertice al final de la secuencia
-                vertex_array_reserve(top_clone, 1);
-                top_clone->data[top_clone->len - 1] = i_vertex;
-
-                // coloca la nueva secuencia en la nueva lista
-                hashmap_put(&new_map, next_key++, top_clone);
-            }
-        }
-
-        // elimina la vieja lista y se cambia por la nueva
-        // lista que se ha generado
-        hashmap_destroy(out_map);
-        memcpy(out_map, &new_map, sizeof(u32vertices_map));
-    }
-
-    free(visited);
-    free(waves);
-
-    // Finalmente añadir el vertice de incio
-    // y darle la vuelta al arreglo, ya que
-    // se hizo de forma regresiva desde el
-    // vertice final hasta el vertice de inicio
-
-    struct hashmap_iterator it = {};
-    hashmap_iterator_init(&it, out_map);
-    for (struct map_entry entry; hashmap_iterator_next(&it, &entry);) {
-        struct vertex_array* path = entry.value;
-
-        vertex_array_reserve(path, 1);
-        path->data[path->len - 1] = start_vertex;
-
-        vertex_array_backwards(path);
-    }
+    hashmap_destroy(&paths);
+    wave_destroy(&root_wave);
 }
 
 void graph_minimal_path(struct graph* graph,
