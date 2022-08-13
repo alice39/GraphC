@@ -7,13 +7,12 @@ void path_init(struct path* path, struct vertex_array* vertices) {
         return;
     }
 
+    vertex_array_destroy(&path->vertices);
+    path->weight = 0;
+    
     if (vertices != NULL) {
         memcpy(&path->vertices, vertices, sizeof(struct vertex_array));
-    } else {
-        vertex_array_destroy(&path->vertices);
     }
-
-    path->weight = 0;
 }
 
 void path_destroy(struct path* path) {
