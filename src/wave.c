@@ -89,14 +89,19 @@ void wave_to_path(struct wave* wave, u32path_map* out_map) {
     stack_push(&stack, wave);
 
     size_t root_depth = wave->depth;
+    // la secuencia de modelo actual para ser copiada
     struct vertex_array model = {};
 
     while (!stack_empty(&stack)) {
         struct wave* pop_wave = stack_pop(&stack);
 
+        // se añade el vertice de la onda actual en el modelo
         vertex_array_reserve(&model, 1);
         model.data[pop_wave->depth - root_depth] = pop_wave->vertex;
         model.len = pop_wave->depth - root_depth + 1;
+
+        // se hace una copia del model para añadirla a los
+        // caminos generados en out_map
 
         struct vertex_array vertices = {};
         vertex_array_clone(&model, &vertices);
@@ -104,6 +109,9 @@ void wave_to_path(struct wave* wave, u32path_map* out_map) {
         struct path* path = calloc(1, sizeof(struct path));
         path_init(path, &vertices);
         hashmap_put(out_map, next_key++, path);
+
+        // se añaden todas las ondas subyacentes a esta onda
+        // para seguir el mismo modelo
 
         struct list_node* node = pop_wave->subwaves.last;
         for (; node != NULL; node = node->back) {
