@@ -431,14 +431,19 @@ void graph_short_path(struct graph* graph,
         return;
     }
 
+    // genera las ondas
     struct wave root_wave = {};
     graph_wave(graph, start_vertex, end_vertex, true, &root_wave);
 
+    // convierte las ondas en camino
     u32path_map paths = {};
     wave_to_path(&root_wave, &paths);
 
     hashmap_init(out_map, hashmap_size(&paths), u32vertices_destroyer);
     mkey_t next_key = 0;
+
+    // ahora añade todas las rutas que contenga solamente
+    // el vertice final
 
     struct hashmap_iterator path_it = {};
     hashmap_iterator_init(&path_it, &paths);
