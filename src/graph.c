@@ -562,11 +562,6 @@ void gpath_destroy(struct gpath* path) {
     path->weight = 0;
 }
 
-void gwave_destroyer(void* wave) {
-    gwave_destroy(wave);
-    free(wave);
-}
-
 void u32path_destroyer(void* path) {
     gpath_destroy(path);
     free(path);
