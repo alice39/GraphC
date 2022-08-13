@@ -117,7 +117,7 @@ void* list_del_last(struct list* list) {
         list->head = NULL;
         list->last = NULL;
     } else {
-        struct list_node* new_last = list->last->next;
+        struct list_node* new_last = list->last->back;
         free(list->last);
 
         new_last->next = NULL;
