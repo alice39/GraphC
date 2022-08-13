@@ -40,11 +40,14 @@ struct queue_vertex {
  * @see vertex_array_reserve
  * @see vertex_array_destroy
  *
+ * @param capacity la capacidad de la secuencia
  * @param len el tamaño de la secuencia
  * @param data donde se guardan los vertices
  */
 struct vertex_array {
+    size_t capacity;
     size_t len;
+
     vertex_t* data;
 };
 
