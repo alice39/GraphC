@@ -479,6 +479,8 @@ void graph_minimal_path(struct graph* graph,
     size_t vertex_len = graph->len;
 
     bool* visited = calloc(vertex_len, sizeof(bool));
+    // permite localizar el costo/peso minimo que dado
+    // vertice puede tener incluyendo su ruta
     struct path* minimal_paths = calloc(vertex_len, sizeof(struct path));
 
     // inicializa con un costo invalido (el mayor posible/infinito)
@@ -489,6 +491,8 @@ void graph_minimal_path(struct graph* graph,
         path->weight = INT32_MAX;
     }
 
+    // crea la ruta inicial para el vertice de partida
+    // y añadirla al arreglo minimal_paths
     struct vertex_array initial_vertex = {};
     vertex_array_from(&initial_vertex, (vertex_t[1]){start_vertex}, 1);
 
@@ -508,9 +512,12 @@ void graph_minimal_path(struct graph* graph,
 
         visited[i] = true;
 
+        // la ruta actual del vertice i
         struct path* i_path = &minimal_paths[i];
 
+        // los vertices que han sido acomulado
         struct vertex_array* accumulated_vertices = &i_path->vertices;
+        // el costo/peso acomulado de esta ruta
         int32_t accumulated_distance = i_path->weight;
 
         for (vertex_t j = 0; j < vertex_len; j++) {
@@ -518,17 +525,27 @@ void graph_minimal_path(struct graph* graph,
                 continue;
             }
 
+            // el costo/peso entre el arco <i, j>
             int32_t distance = graph_get(graph, i, j);
+            // el costo/peso absorbido entre el arco <i, j>
+            // y los acomulados
             int32_t absorbed_distance = distance + accumulated_distance;
 
             struct path* j_path = &minimal_paths[j];
+
+            // si se encontró una ruta con el menor costo/peso
+            // actual, cambiarla por la nueva que se ha generado
+
             if (j_path->weight > absorbed_distance) {
                 struct vertex_array* absorbed_vertices = &j_path->vertices;
 
+                // hacer una copia modelo de los vertices
+                // incluyendo este al final
                 vertex_array_clone(accumulated_vertices, absorbed_vertices);
                 vertex_array_reserve(absorbed_vertices, 1);
                 absorbed_vertices->data[absorbed_vertices->len++] = j;
 
+                // el costo/peso minimo encontrado
                 j_path->weight = absorbed_distance;
             }
 
@@ -536,18 +553,23 @@ void graph_minimal_path(struct graph* graph,
         }
     }
 
+    // Ahora añadir todos las rutas generadas a un mapa
     hashmap_init(out_map, 0, u32path_destroyer);
 
     for (vertex_t i = 0; i < vertex_len; i++) {
         struct path* path = &minimal_paths[i];
+        // si no se pudo generar un camino hasta aquí
         if (path->weight == INT32_MAX) {
             continue;
         }
+        // Si la longitud es 1, indica que es el vertice
+        // de partida, así que ignorarlo
         if (path->vertices.len == 1) {
             path_destroy(path);
             continue;
         }
 
+        // hacer una copia en el heap de la ruta
         struct path* heap_path = malloc(sizeof(struct path));
         memcpy(heap_path, path, sizeof(struct path));
 
