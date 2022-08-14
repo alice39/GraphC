@@ -19,7 +19,7 @@ void wave_print(struct wave* wave) {
         return;
     }
 
-    stack_t wave_stack = {};
+    stack_t wave_stack = {0};
     stack_init(&wave_stack, NULL);
     stack_push(&wave_stack, wave);
 
@@ -84,13 +84,13 @@ void wave_to_path(struct wave* wave, u32path_map* out_map) {
     hashmap_init(out_map, 0, u32path_destroyer);
     mkey_t next_key = 0;
 
-    stack_t stack = {};
+    stack_t stack = {0};
     stack_init(&stack, NULL);
     stack_push(&stack, wave);
 
     size_t root_depth = wave->depth;
     // la secuencia de modelo actual para ser copiada
-    struct vertex_array model = {};
+    struct vertex_array model = {0};
 
     while (!stack_empty(&stack)) {
         struct wave* pop_wave = stack_pop(&stack);
@@ -103,7 +103,7 @@ void wave_to_path(struct wave* wave, u32path_map* out_map) {
         // se hace una copia del model para añadirla a los
         // caminos generados en out_map
 
-        struct vertex_array vertices = {};
+        struct vertex_array vertices = {0};
         vertex_array_clone(&model, &vertices);
 
         struct path* path = calloc(1, sizeof(struct path));
