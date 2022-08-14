@@ -26,7 +26,7 @@ int main(int argc, char** args) {
         return 1;
     }
 
-    struct graph graph = {};
+    struct graph graph = {0};
 
     printf("Cargando archivo: %s\n", filename);
     fread_graph(&graph, file);
@@ -91,7 +91,7 @@ static void on_menu(struct graph* graph) {
                 const struct gcomponent* comp = NULL;
                 graph_components(graph, &comp);
 
-                struct hashmap_iterator it = {};
+                struct hashmap_iterator it = {0};
                 hashmap_iterator_init(&it, &comp->map);
 
                 for (struct map_entry entry; hashmap_iterator_next(&it, &entry);) {
@@ -131,10 +131,10 @@ static void on_menu(struct graph* graph) {
                 printf(" Ingrese 2do vertice: ");
                 scanf("%lu", &w);
 
-                u32vertices_map short_paths = {};
+                u32vertices_map short_paths = {0};
                 graph_short_path(graph, v - 1, w - 1, &short_paths);
 
-                struct hashmap_iterator it = {};
+                struct hashmap_iterator it = {0};
                 hashmap_iterator_init(&it, &short_paths);
 
                 printf(" Posibles caminos:\n");
@@ -167,10 +167,10 @@ static void on_menu(struct graph* graph) {
                     break;
                 }
 
-                struct wave root_wave = {};
+                struct wave root_wave = {0};
                 graph_wave(graph, v - 1, VERTEX_T_MAX, false, &root_wave);
 
-                u32path_map paths = {};
+                u32path_map paths = {0};
                 wave_to_path(&root_wave, &paths);
 
                 const struct gcomponent* comp = {0};
@@ -180,7 +180,7 @@ static void on_menu(struct graph* graph) {
                 size_t max_depth = members != NULL ? members->len : 0;
 
                 for (size_t depth = 2; depth <= max_depth; depth++) {
-                    struct hashmap_iterator it = {};
+                    struct hashmap_iterator it = {0};
                     hashmap_iterator_init(&it, &paths);
 
                     bool is_unlinked = true;
@@ -220,7 +220,7 @@ static void on_menu(struct graph* graph) {
                 printf("Ingrese el 2do vertice: ");
                 scanf("%lu", &w);
 
-                u32path_map minimal_paths = {};
+                u32path_map minimal_paths = {0};
                 graph_minimal_path(graph, v - 1, w - 1, &minimal_paths);
 
                 struct path* path = hashmap_get(&minimal_paths, w - 1);
@@ -240,10 +240,10 @@ static void on_menu(struct graph* graph) {
                 scanf("%lu", &v);
                 printf("\n");
 
-                u32path_map minimal_paths = {};
+                u32path_map minimal_paths = {0};
                 graph_minimal_path(graph, v - 1, VERTEX_T_MAX, &minimal_paths);
 
-                struct hashmap_iterator path_it = {};
+                struct hashmap_iterator path_it = {0};
                 hashmap_iterator_init(&path_it, &minimal_paths);
                 for (struct map_entry entry; hashmap_iterator_next(&path_it, &entry);) {
                     struct path* path = entry.value;

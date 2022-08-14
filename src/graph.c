@@ -217,11 +217,11 @@ void graph_wave(const struct graph* graph,
 
     // permite localizar que onda pertene un vertice de forma
     // rápida y eficiente
-    vtwave_map wave_track = {};
+    vtwave_map wave_track = {0};
     hashmap_init(&wave_track, 0, NULL);
     hashmap_put(&wave_track, start_vertex, out_wave);
 
-    struct queue_vertex wave_queue = {};
+    struct queue_vertex wave_queue = {0};
     queue_vertex_init(&wave_queue);
     queue_vertex_add(&wave_queue, start_vertex);
 
@@ -432,11 +432,11 @@ void graph_short_path(struct graph* graph,
     }
 
     // genera las ondas
-    struct wave root_wave = {};
+    struct wave root_wave = {0};
     graph_wave(graph, start_vertex, end_vertex, true, &root_wave);
 
     // convierte las ondas en camino
-    u32path_map paths = {};
+    u32path_map paths = {0};
     wave_to_path(&root_wave, &paths);
 
     hashmap_init(out_map, hashmap_size(&paths), u32vertices_destroyer);
@@ -445,7 +445,7 @@ void graph_short_path(struct graph* graph,
     // ahora añade todas las rutas que contenga solamente
     // el vertice final
 
-    struct hashmap_iterator path_it = {};
+    struct hashmap_iterator path_it = {0};
     hashmap_iterator_init(&path_it, &paths);
     for (struct map_entry entry; hashmap_iterator_next(&path_it, &entry);) {
         struct path* path = entry.value;
@@ -498,14 +498,14 @@ void graph_minimal_path(struct graph* graph,
 
     // crea la ruta inicial para el vertice de partida
     // y añadirla al arreglo minimal_paths
-    struct vertex_array initial_vertex = {};
+    struct vertex_array initial_vertex = {0};
     vertex_array_from(&initial_vertex, (vertex_t[1]){start_vertex}, 1);
 
     struct path* start_path = &minimal_paths[start_vertex];
     path_init(start_path, &initial_vertex);
     start_path->weight = 0;
 
-    struct queue_vertex queue = {};
+    struct queue_vertex queue = {0};
     queue_vertex_init(&queue);
     queue_vertex_add(&queue, start_vertex);
 
