@@ -68,11 +68,11 @@ static void on_menu(struct graph* graph) {
         printf(" 2) Componentes conexas\n");
         printf(" 3) Alcanzabilidad de dos vertices\n");
         printf(" 4) Camino corto de dos vertices\n");
-        printf(" 5) Camino corto de un vertice con todos los demás\n");
+        printf(" 5) Camino corto de un vertice con todos los demas\n");
         printf(" 6) Camino debil de dos vertices\n");
-        printf(" 7) Camino debil de un vertice con todos los demás\n");
+        printf(" 7) Camino debil de un vertice con todos los demas\n");
         printf(" 8) Salir\n");
-        printf("Opción: ");
+        printf("Opcion: ");
 
         int option = 0;
         scanf("%d", &option);
@@ -191,7 +191,7 @@ static void on_menu(struct graph* graph) {
 
                         if (vertices->len == depth) {
                             if (is_unlinked) {
-                                printf("\n %lu vínculo de distancia:\n  ", depth - 1);
+                                printf("\n %lu vinculo de distancia:\n  ", depth - 1);
                             } else {
                                 printf(", ");
                             }
@@ -262,7 +262,7 @@ static void on_menu(struct graph* graph) {
                 break;
             }
             default: {
-                printf("Opción invalida\n");
+                printf("Opcion invalida\n");
             }
         }
 
