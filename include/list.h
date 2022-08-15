@@ -177,7 +177,7 @@ static inline bool stack_empty(stack_t* stack) {
 }
 
 /**
- * Destroye una pila ya inicializada.
+ * Destruye una pila ya inicializada.
  *
  * @param stack la pila a destruir
  */
@@ -189,7 +189,7 @@ static inline void stack_destroy(stack_t* stack) {
  * Añade un elemento encima de la pila.
  *
  * @param stack la pila en donde se añadirá
- * @param data el eleme
+ * @param data el elemento a añadir
  */
 static inline void stack_push(stack_t* stack, void* data) {
     list_add_last(stack, data);

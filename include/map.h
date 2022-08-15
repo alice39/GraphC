@@ -36,13 +36,11 @@ struct map_entry {
 
 /**
  * Representa un nodo de un struct map_entry en una
- * lista doble-enlazada.
+ * lista enlazada.
  *
  * El nodo sirve para evitar posibles colisiones en el mapa.
  *
  * @member entry el par que relaciona la llave con un dato
- * @member back el nodo previo (subyancete a este nodo), NULL
- *              si no hay (entonces el primer nodo)
  * @member next el nodo siguiente (subyancete a este nodo),
  *              NULL si no hay (entonces el último nodo)
  */

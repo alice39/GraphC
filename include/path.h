@@ -24,9 +24,9 @@ struct path {
 
 /**
  * Representa un HashMap en el que vincula uint32_t (la llave)
- * con un struct gpath (el valor).
+ * con un struct path (el valor).
  *
- * Visto de otra forma: HashMap<uint32_t, struct gpath>
+ * Visto de otra forma: HashMap<uint32_t, struct path>
  *
  * @see hashmap
  * @see u32path_destroyer
