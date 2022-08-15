@@ -5,18 +5,16 @@
 #include <stddef.h>
 
 /**
- * Representa el destructor de valores de la lista enlazada.
+ * Represents the value destructor of a linked list.
  */
 typedef void (*lfree_t)(void*);
 
 /**
- * El nodo de la lista enlazada.
+ * The node of a linked list.
  *
- * @member data el valor almacenado
- * @member next el nodo siguiente, NULL si
- *         no hay
- * @member back el nodo anterior, NULL si
- *         no hay
+ * @member data the stored value
+ * @member next the next node, NULL if there is no
+ * @member back the back node, NULL if there is no
  */
 struct list_node {
     void* data;
@@ -26,17 +24,17 @@ struct list_node {
 };
 
 /**
- * La estructura de datos que representa una Lista Enlazada.
+ * The data structure that represents a Linked List.
  *
  * @see list_init
  * @see list_destroy
  *
- * @member destroyer la función que destruye el valor
- *                   almacenado en el mapa, puede ser NULL
- *                   si no es necesario
- * @member size tamaño de la lista
- * @member head el primer nodo de la lista, NULL si no hay
- * @member last el último nodo de la lista, NULL si no hay
+ * @member destroyer the function that destroyes the stored
+ *                   value in the list, it can be NULL if it is
+ *                   not needed
+ * @member size the size of list
+ * @member head the first node in the list, NULL if there is no
+ * @member last the last node in the list, NULL if there is no
  */
 struct list {
     lfree_t destroyer;
@@ -47,159 +45,161 @@ struct list {
 };
 
 /**
- * El tipo de dato que representa una Cola.
+ * The data type that represents a Queue.
  *
  * @see struct list
  */
 typedef struct list queue_t;
 /**
- * El tipo de dato que representa una Pila.
+ * The data type that representa a Stack.
  *
  * @see struct list
  */
 typedef struct list stack_t;
 
 /**
- * Inicializa una lita enlazada.
+ * Initialize a linked list.
  *
- * @param list la lista a inicializar
- * @param destroyer destructor de valores, puede ser NULL
+ * @param list the list to initialize
+ * @param destroyer value destructor, NULL if there is no
  */
 void list_init(struct list* list, lfree_t destroyer);
 /**
- * Verifica si la lista está vacia.
+ * Check if the list is empty.
  *
- * @return true si está vacio, false lo contrario
+ * @param list the list to check
+ * @return true if it's empty, otherwise false
  */
 bool list_empty(struct list* list);
 /**
- * Destruye una lista ya inicializada.
+ * Destroy an initialized list.
  *
- * @param list la lista a destruir
+ * @param list the list to destroy
  */
 void list_destroy(struct list* list);
 
 /**
- * Añade un elemeneto al comienzo de la lista.
+ * Add an element at the list's beginning.
  *
- * @param list la lista en donde se añadira el elemento
- * @param data el elemento a añadir
+ * @param list the list where to add the element
+ * @param data the element to add
  */
 void list_add_head(struct list* list, void* data);
 /**
- * Añade un elemeneto al final de la lista.
+ * Add an element at the list's ending.
  *
- * @param list la lista en donde se añadira el elemento
- * @param data el elemento a añadir
+ * @param list the list where to add the element
+ * @param data the element to add
  */
 void list_add_last(struct list* list, void* data);
 
 /**
- * Elimina el primer elemento de la lista.
+ * Delete the head list's element.
  *
- * @param list la lista a quitar el elemento
- * @return el valor que tenía
+ * @param list the list where to delete the element
+ * @return the stored value
  */
 void* list_del_head(struct list* list);
 /**
- * Elimina el último elemento de la lista.
+ * Delete the last list's element.
  *
- * @param list la lista a quitar el elemento
- * @return el valor que tenía
+ * @param list the list where to delete the element
+ * @return the stored value
  */
 void* list_del_last(struct list* list);
 
 /**
- * Inicializa una cola.
+ * Initialize a queue.
  *
- * @param queue la cola a inicializar
- * @param destroyer destructor de valores, puede ser NULL
+ * @param queue the queue to initialize
+ * @param destroyer the value destructor, it can be NULL
  */
 static inline void queue_init(queue_t* queue, lfree_t destroyer) {
     list_init(queue, destroyer);
 }
 
 /**
- * Verifica si la cola está vacia.
+ * Check if the queue is empty.
  *
- * @return true si está vacio, false lo contrario
+ * @return true if it's empty, otherwise false
  */
 static inline bool queue_empty(queue_t* queue) {
     return list_empty(queue);
 }
 
 /**
- * Destruye una cola ya inicializada.
+ * Destroy an initialized queue.
  *
- * @param queue la cola a destruir
+ * @param queue the queue to destroy
  */
 static inline void queue_destroy(queue_t* queue) {
     list_destroy(queue);
 }
 
 /**
- * Añade un elemento a la cola.
+ * Add an element in the queue.
  *
- * @param queue la cola a añadir el elemento
- * @param data el elemento a añadir
+ * @param queue the queue where to add the element to
+ * @param data the element to be added
  */
 static inline void queue_add(queue_t* queue, void* data) {
     list_add_last(queue, data);
 }
 
 /**
- * Elimina el siguiente elemento de la cola.
+ * Extract the next queue's element.
  *
- * @param queue la cola a quitar el elemento
+ * @param queue the queue to extract the element from
+ * @return the element that had
  */
 static inline void* queue_del(queue_t* queue) {
     return list_del_head(queue);
 }
 
 /**
- * Inicializa una pila.
+ * Initialize a stack.
  *
- * @param stack la pila a inicializar
- * @param destroyer destructor de valores, puede ser NULL
+ * @param stack the stack to initilize
+ * @param destroyer the value destructor, it can be NULL
  */
 static inline void stack_init(stack_t* stack, lfree_t destroyer) {
     list_init(stack, destroyer);
 }
 
 /**
- * Verifica si la pila está vacia.
+ * Check if the stack is empty.
  *
- * @param stack la pila a verificar
- * @return true si está vacia, falso lo contrario
+ * @param stack the stack to check
+ * @return true if it's empty, otherwise false
  */
 static inline bool stack_empty(stack_t* stack) {
     return list_empty(stack);
 }
 
 /**
- * Destroye una pila ya inicializada.
+ * Destroy an initialized stack.
  *
- * @param stack la pila a destruir
+ * @param stack the stack to destroy
  */
 static inline void stack_destroy(stack_t* stack) {
     list_destroy(stack);
 }
 
 /**
- * Añade un elemento encima de la pila.
+ * Push an element at the stack's top.
  *
- * @param stack la pila en donde se añadirá
- * @param data el eleme
+ * @param stack the stack where to add the element to
+ * @param data the element to push
  */
 static inline void stack_push(stack_t* stack, void* data) {
     list_add_last(stack, data);
 }
 
 /**
- * Quita el elemento encima de la pila.
+ * Pop an element from stack's top.
  *
- * @param stack la pila a quitar el elemento
- * @return el elemento que tenía
+ * @param stack the stack where to pop the element from
+ * @return the element that had
  */
 static inline void* stack_pop(stack_t* stack) {
     return list_del_last(stack);

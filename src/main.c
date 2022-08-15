@@ -5,16 +5,16 @@
 #include <graph.h>
 
 /**
- * Lee desde un archivo los datos de un grafo.
+ * Read from a file data of a graph.
  *
- * @param graph el grafo a almcenar los datos
- * @param file el archivo a leer
+ * @param graph the graph to store the data
+ * @param file the file to read
  */
 static void fread_graph(struct graph* graph, FILE* file);
 /**
- * El menu principal.
+ * The main menu.
  *
- * @param graph el grafo
+ * @param graph the graph
  */
 static void on_menu(struct graph* graph);
 
@@ -22,13 +22,13 @@ int main(int argc, char** args) {
     const char* filename = argc > 1 ? args[1] : "Panas.in";
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
-        printf("El archivo %s no existe o no puede ser leido\n", filename);
+        printf("The file %s doesn't exist or cannot be read\n", filename);
         return 1;
     }
 
     struct graph graph = {0};
 
-    printf("Cargando archivo: %s\n", filename);
+    printf("Loading file: %s\n", filename);
     fread_graph(&graph, file);
     fclose(file);
 
@@ -63,16 +63,16 @@ static void fread_graph(struct graph* graph, FILE* file) {
 static void on_menu(struct graph* graph) {
     bool running = true;
     while (running) {
-        printf(" ----------- Menu Grafo -----------\n");
-        printf(" 1) Ver matriz de adyacencia\n");
-        printf(" 2) Componentes conexas\n");
-        printf(" 3) Alcanzabilidad de dos vertices\n");
-        printf(" 4) Camino corto de dos vertices\n");
-        printf(" 5) Camino corto de un vertice con todos los demás\n");
-        printf(" 6) Camino debil de dos vertices\n");
-        printf(" 7) Camino debil de un vertice con todos los demás\n");
+        printf(" ----------- Graph Menu -----------\n");
+        printf(" 1) Show adjacency matrix\n");
+        printf(" 2) Connected components\n");
+        printf(" 3) Reachable of two vertices\n");
+        printf(" 4) Short path of two vertices\n");
+        printf(" 5) Short path from one vertex against the other ones\n");
+        printf(" 6) Weak path of two vertices\n");
+        printf(" 7) Weak path from one vertex against the other ones\n");
         printf(" 8) Salir\n");
-        printf("Opción: ");
+        printf("Option: ");
 
         int option = 0;
         scanf("%d", &option);
@@ -95,7 +95,7 @@ static void on_menu(struct graph* graph) {
                 hashmap_iterator_init(&it, &comp->map);
 
                 for (struct map_entry entry; hashmap_iterator_next(&it, &entry);) {
-                    printf("Aldea %lu (%lu):", it.found_size, entry.key);
+                    printf("Connected component %lu (%lu):", it.found_size, entry.key);
                     struct vertex_array* arr = entry.value;
 
                     for (size_t j = 0; j < arr->len; j++) {
@@ -111,24 +111,24 @@ static void on_menu(struct graph* graph) {
                 vertex_t v = 0;
                 vertex_t w = 0;
 
-                printf(" Ingrese 1er vertice: ");
+                printf("Input 1st vertex: ");
                 scanf("%lu", &v);
                 
-                printf(" Ingrese 2do vertice: ");
+                printf("Input 2nd vertex: ");
                 scanf("%lu", &w);
 
                 bool reachable = graph_reachable(graph, v - 1, w - 1);
-                printf("Es v%lu~v%lu: %s\n", v, w, reachable ? "Si" : "No");
+                printf("Is v%lu~v%lu: %s\n", v, w, reachable ? "Yes" : "No");
                 break;
             }
             case 4: {
                 vertex_t v = 0;
                 vertex_t w = 0;
 
-                printf(" Ingrese 1er vertice: ");
+                printf("Input 1st vertex: ");
                 scanf("%lu", &v);
                 
-                printf(" Ingrese 2do vertice: ");
+                printf("Input 2nd vertex: ");
                 scanf("%lu", &w);
 
                 u32vertices_map short_paths = {0};
@@ -137,7 +137,7 @@ static void on_menu(struct graph* graph) {
                 struct hashmap_iterator it = {0};
                 hashmap_iterator_init(&it, &short_paths);
 
-                printf(" Posibles caminos:\n");
+                printf(" Posible paths:\n");
                 for (struct map_entry entry; hashmap_iterator_next(&it, &entry);) {
                     struct vertex_array* vertices = entry.value;
 
@@ -158,7 +158,7 @@ static void on_menu(struct graph* graph) {
                 break;
             }
             case 5: {
-                printf("Ingrese el vertice: ");
+                printf("Input the vertex: ");
 
                 vertex_t v = 0;
                 scanf("%lu", &v);
@@ -191,7 +191,7 @@ static void on_menu(struct graph* graph) {
 
                         if (vertices->len == depth) {
                             if (is_unlinked) {
-                                printf("\n %lu vínculo de distancia:\n  ", depth - 1);
+                                printf("\n %lu distance of edge:\n  ", depth - 1);
                             } else {
                                 printf(", ");
                             }
@@ -214,10 +214,10 @@ static void on_menu(struct graph* graph) {
                 vertex_t v = 0;
                 vertex_t w = 0;
 
-                printf("Ingrese el 1er vertice: ");
+                printf("Input 1st vertex: ");
                 scanf("%lu", &v);
                 
-                printf("Ingrese el 2do vertice: ");
+                printf("Input 2nd vertex: ");
                 scanf("%lu", &w);
 
                 u32path_map minimal_paths = {0};
@@ -236,7 +236,7 @@ static void on_menu(struct graph* graph) {
             case 7: {
                 vertex_t v = 0;
 
-                printf("Ingrese el vertice: ");
+                printf("Input the vertex: ");
                 scanf("%lu", &v);
                 printf("\n");
 
@@ -262,12 +262,12 @@ static void on_menu(struct graph* graph) {
                 break;
             }
             default: {
-                printf("Opción invalida\n");
+                printf("Invalid Option\n");
             }
         }
 
         if (running) {
-            printf("\nPulse enter para continuar");
+            printf("\nPress enter to continue");
 
             int key = 0;
             for (int lines = 0; key != EOF && lines < 2;) {

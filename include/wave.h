@@ -10,17 +10,17 @@
 #include "path.h"
 
 /**
- * Representa una lista enlazada de struct wave;
+ * Represents a linked list of struct wave
  */
 typedef struct list wave_list;
 
 /**
- * Representa una onda de un grafo.
+ * Represents a wave from a graph.
  *
- * @member parent la onda anterior, NULL si no hay
- * @member depth la profundidad de la onda
- * @member vertex el vertice de esta onda
- * @member subwaves los sub-ondas existentes
+ * @member parent the parent wave, NULL if there is no
+ * @member depth the wave depth
+ * @member vertex the vertex of this wave
+ * @member subwaves the underlying sub-waves
  */
 struct wave {
     struct wave* parent;
@@ -32,64 +32,68 @@ struct wave {
 };
 
 /**
- * Representa un HashMap con llave vertex_t y valor struct wave.
+ * Represents a HashMap that links a vertex_t (the key) with a
+ * struct wave (the value).
+ *
+ * See in another way: HashMap<vertex_t, struct wave>
  *
  * @see wave_destroyer
  */
 typedef struct hashmap vtwave_map;
 
 /**
- * Inicializa una onda.
+ * Initialize a wave.
  *
- * @param wave la onda a inicializar
- * @param parent la onda anterior, NULL si no hay
- * @param vertex el vertice de esta onda
+ * @param wave the wave to initialize
+ * @param parent the parent wave, NULL if there is no
+ * @param vertex the vertex of this wave
  */
 void wave_init(struct wave* wave, struct wave* parent, vertex_t vertex);
 /**
- * Imprime en consola una onda.
+ * Print in STDOUT a wave.
  *
- * @param wave la onda a imprimir
+ * @param wave the wave to print
  */
 void wave_print(struct wave* wave);
 /**
- * Destroye una onda inicializada.
+ * Destroy an initialized wave.
  *
- * @param wave la onda a destruir
+ * @param wave the wave to destroy
  */
 void wave_destroy(struct wave* wave);
 
 /**
- * Añade un vertice a la onda.
+ * Add a vertex in a wave.
  *
- * Si se intenta añadir un vertice dos veces, se ignorará.
+ * If a vertex is attempted to be added twice, it will be
+ * ignored.
  *
- * @param wave la onda donde se añadira el vertice
- * @param vertex el vertice a añadir
- * @return la onda del vertice que fue añadida
+ * @param wave the wave where to add the vertex in
+ * @param vertex the vertex to add
+ * @return the sub-wave created by adding the vertex
  */
 struct wave* wave_add(struct wave* wave, vertex_t vertex);
 /**
- * Regresa la onda de un vertice.
+ * Return the sub-wave of a vertex.
  *
- * @param wave la onda en donde está el vertice
- * @param vertex el vertice a buscar
- * @return la onda del vertice, NULL si no existe
+ * @param wave the wave where to get the sub-wave
+ * @param vertex the vertex to look for
+ * @return the vertex's sub-wave, NULL if it doesn't exist
  */
 struct wave* wave_get(struct wave* wave, vertex_t vertex);
 
 /**
- * Convierte una onda en todos los caminos posibles.
+ * Transform a wave in all possible paths.
  *
- * @param wave la onda a convertir
- * @param out_map los caminos generados
+ * @param wave the wave to transform
+ * @param out_map the generated paths
  */
 void wave_to_path(struct wave* wave, u32path_map* out_map);
 
 /**
- * El destructor del wave para los tipos de datos.
+ * The value destructor of wave.
  *
- * @param wave la onda
+ * @param wave the wave to destroy
  */
 void wave_destroyer(void* wave);
 

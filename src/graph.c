@@ -6,36 +6,37 @@
 #include <list.h>
 
 /**
- * Devuelve el valor que identifica que no hay un vinculo en
- * un grafo.
+ * Return the value that identifies that there is no an edge
+ * in a graph.
  *
- * @param graph el grafo a obtener el valor
- * @return el valor vacio
+ * @param graph the graph to get the value
+ * @return the empty value
  */
 static inline int32_t g_empty_weight(const struct graph* graph);
 /**
- * Verifica si dos vertices no pertenen al grafo.
+ * Check if two vertices belong in a graph.
  *
- * @param graph el grafo donde pertenen los vertices
- * @param vi el primer vertice a comprobar
- * @param wj el segundo vertice a comprobar
- * @return true si no pertenen al grafo de lo contrario false 
+ * @param graph the graph where vertices belong in
+ * @param vi the first vertex to check
+ * @param wj the second vertex to check
+ * @return true if at least one doesn't belong in given graph,
+ *         otherwise false
  */
 static inline bool g_is_out(const struct graph* graph, vertex_t vi, vertex_t wj);
 /**
- * Verifica inicicialmente el camino de dos vertice en el
- * grafo.
+ * Check if initially the path between two vertices in
+ * a graph.
  *
- * @param graph el grafo a verificar el camino
- * @param start_vertex el vertice de partida del camino
- * @param end_vertex el vertice de llegada del camino
- * @return true si todo está correcto, de lo contrario false
+ * @param graph the graph to check the path
+ * @param start_vertex the source vertex (where it starts at)
+ * @param end_vertex the destination vertex (where it ends at)
+ * @return true if it passes check, otherwise false
  */
 static bool g_initial_path(struct graph* graph, vertex_t start_vertex, vertex_t end_vertex);
 /**
- * Destruye la cache de un grafo.
+ * Destroy a cache of a graph.
  *
- * @param graph el grafo a destruir la memoria cache
+ * @param graph the graph to destroy its cache
  */
 static void g_invalidate_cache(struct graph* graph);
 
@@ -53,8 +54,8 @@ void graph_init(struct graph* graph, bool weighted, size_t len) {
     graph->len = len;
     graph->matrix = malloc(sizeof(int32_t*) * len);
 
-    // inicializa la matriz de adyadencia con el valor
-    // por defecto del grafo
+    // initialize the adjacency matrix with the default
+    // value of graph
     for (vertex_t i = 0; i < len; i++) {
         graph->matrix[i] = malloc(sizeof(int32_t) * len);
         for (vertex_t j = 0; j < len; j++) {
@@ -159,7 +160,6 @@ void graph_del(struct graph* graph, vertex_t vi, vertex_t wj) {
     graph->matrix[wj][vi] = empty_weight;
 }
 
-// NOTA: no es usado, lo implementé por las clases
 size_t graph_rcount(const struct graph* graph, vertex_t vi) {
     if (g_is_out(graph, vi, 0)) {
         return 0;
@@ -177,7 +177,6 @@ size_t graph_rcount(const struct graph* graph, vertex_t vi) {
     return count;
 }
 
-// NOTA: no es usado, pero lo implementé por las clases
 size_t graph_ccount(const struct graph* graph, vertex_t wj) {
     if (g_is_out(graph, 0, wj)) {
         return 0;
@@ -204,19 +203,18 @@ void graph_wave(const struct graph* graph,
         return;
     }
 
-    // inicializa la onda con el vertice de partida
+    // initialize the wave with the source vertex
     wave_init(out_wave, NULL, start_vertex);
 
     size_t vertex_len = graph->len;
 
     bool* visited = calloc(vertex_len, sizeof(bool));
-    // inter_visited es usado para poder duplicar los
-    // vertices si hay varios vertices inter-conectados
-    // entre si
+    // inter_visited is used to be able duplicate the
+    // vertices if there are several inter-connected between
+    // themselves
     bool* inter_visited = calloc(vertex_len, sizeof(bool));
 
-    // permite localizar que onda pertene un vertice de forma
-    // rápida y eficiente
+    // allow to track which wave belongs a vertex in a fast way
     vtwave_map wave_track = {0};
     hashmap_init(&wave_track, 0, NULL);
     hashmap_put(&wave_track, start_vertex, out_wave);
@@ -225,7 +223,7 @@ void graph_wave(const struct graph* graph,
     queue_vertex_init(&wave_queue);
     queue_vertex_add(&wave_queue, start_vertex);
 
-    // para evitar de añadir mas vertices innecesarios
+    // to avoid adding more innecesary vertices
     bool found_vertex = false;
 
     while (!queue_vertex_empty(&wave_queue)) {
@@ -250,15 +248,15 @@ void graph_wave(const struct graph* graph,
 
                 inter_visited[j] = true;
 
-                // añade el vertice j como la subonda del
-                // vertice i, de misma forma se añade la
-                // onda generada del vertice j en el mapa
+                // add the vertex j as sub-wave of vertex i,
+                // in same way, it'll be added the generated
+                // sub-wave in the map.
                 hashmap_put(&wave_track, j, wave_add(wave, j));
 
                 found_vertex |= j == end_vertex;
 
-                // si ya se encontró el vertice final
-                // ya no es necesario encolar más vertices
+                // if destination vertex was found
+                // then it's not needed to queue more vertices
                 if (found_vertex) {
                     continue;
                 }
@@ -286,8 +284,8 @@ void graph_components(struct graph* graph, const struct gcomponent** out_comp) {
     }
 
     struct gcomponent* cache_comp = graph->cache.component;
-    // verificar si las componentes conexas ya han sido
-    // calculadas para evitar recalcularla
+    // check if connected components were already computed
+    // to avoid computing it again
     if (cache_comp != NULL) {
         if (out_comp != NULL) {
             *out_comp = cache_comp;
@@ -296,64 +294,59 @@ void graph_components(struct graph* graph, const struct gcomponent** out_comp) {
         return;
     }
 
-    // cantidad de vertices que hay en el grafo
+    // size of vertices that there are in the graph
     size_t vertex_len = graph->len;
 
-    // indica cuantos vertices faltan para recorrer
+    // indicates how many left vertices there are
     size_t remaining_len = vertex_len;
-    // indica en que componente conexa pertenene un vertice
-    // esto está estructurado de la siguiente manera:
-    //     vertex_classes[vertice] = ID de componente conexa
-    // la ID de una componente conexa invalida es 0
+    // indicates which connected component belongs a vertex
+    // this is structured as the following way:
+    //     vertex_classes[vertex] = connected component ID
+    // the connected component ID is invalid if it is 0
     uint32_t* vertex_classes = calloc(vertex_len, sizeof(uint32_t));
 
-    // numeros de componentes conexas que existen
-    // p por notación |G| = p
+    // size of connected components exist
+    // p by notation |G| = p
     size_t p = vertex_len;
 
     for (vertex_t i = 0; i < vertex_len && remaining_len > 0; i++) {
-        // el vertice i ya pertenen a una componente conexa
-        // o en otras palabras, ya fue visitado
+        // the vertex i already belongs in a connected component
+        // or in other words, it already was visited
         if (vertex_classes[i] != 0) {
             continue;
         }
 
+        // class_id represents the connected component ID
         uint32_t class_id = i + 1;
         vertex_classes[i] = class_id;
 
-        // class_id representa la ID de la componente conexa
-        // el nombre class_id es debido a clase de equivalencia
-        // uint32_t class_id = i + 1;
-        // vertex_classes[i] = class_id;
-
         for (vertex_t j = 0; j < vertex_len && remaining_len > 0; j++) {
-            // si no hay un vinculo (i, j) entonces se ignorará
+            // if there is no edge (i, j) then it'll be ignored
             if (!graph_has(graph, i, j)) {
                 continue;
             }
             
-            // si ya pertenen a la misma componente conexa,
-            // entonces ignorarlo
+            // if it already belongs in the same connected
+            // component, then ignore it
             if (vertex_classes[j] == class_id) {
                 continue;
             }
 
-            // se reduce la cantidad de componentes conexas
-            // que existen
+            // decrease size of connected components that exist
             p--;
 
-            // si todavía no pertenen a ninguna componente
-            // conexa entonces añadirlo a una
+            // if it doesn't still belong in a connected
+            // component then add it in one
             if (vertex_classes[j] == 0) {
                 vertex_classes[j] = class_id;
                 remaining_len--;
                 continue;
             }
 
-            // si el vertice j ya pertenecia a otra componente
-            // conexa entonces hacer que todos los vertices de
-            // la actual componente conexa se vuelvan de la
-            // misma que ya pertenecia el vertice
+            // if the vertex j belongs in another connected
+            // component then change all vertices that belong
+            // in the actual connected component in the
+            // connected component of vertex j
 
             uint32_t old_class_id = class_id;
             class_id = vertex_classes[j];
@@ -368,9 +361,8 @@ void graph_components(struct graph* graph, const struct gcomponent** out_comp) {
         remaining_len--;
     }
 
-    // generar una version cache para evitar recalcular
-    // de nuevo las componentes conexas que pertenecen
-    // los vertices
+    // generate a cache version to avoid recomputing twice
+    // the connected components that belong the vertices
 
     cache_comp = calloc(1, sizeof(struct gcomponent));
     graph->cache.component = cache_comp;
@@ -378,8 +370,8 @@ void graph_components(struct graph* graph, const struct gcomponent** out_comp) {
     cache_comp->array.len = vertex_len;
     cache_comp->array.data = vertex_classes;
 
-    // añade los vertices que tengan la misma ID de la
-    // componente conexa en una misma secuencia/lista
+    // add the vertices that have the same ID in the same
+    // vertex sequence
     u32vertices_map* map = &cache_comp->map;
     hashmap_init(map, p, u32vertices_destroyer);
 
@@ -387,7 +379,7 @@ void graph_components(struct graph* graph, const struct gcomponent** out_comp) {
         uint32_t i_class = vertex_classes[i];
 
         struct vertex_array* arr = hashmap_get(map, i_class);
-        
+
         // si la secuencia de una componente conexa no existe
         // entonces crear una
         if (arr == NULL) {
@@ -395,7 +387,7 @@ void graph_components(struct graph* graph, const struct gcomponent** out_comp) {
             hashmap_put(map, i_class, arr);
         }
 
-        // añade el vertice al final de la secuencia
+        // add the vertice at the end of sequence
         vertex_array_reserve(arr, 1);
         arr->data[arr->len++] = i;
     }
@@ -416,8 +408,8 @@ bool graph_reachable(struct graph* graph, vertex_t start_vertex, vertex_t end_ve
         return false;
     }
 
-    // dos vertices son alcanzable si están en la misma
-    // componente conexa (o tienen la misma ID)
+    // two vertices are reachable if they are in the same
+    // connected component (or they have same ID)
 
     const uint32_t* data = component->array.data;
     return data[start_vertex] == data[end_vertex];
@@ -431,19 +423,19 @@ void graph_short_path(struct graph* graph,
         return;
     }
 
-    // genera las ondas
+    // generate the waves
     struct wave root_wave = {0};
     graph_wave(graph, start_vertex, end_vertex, true, &root_wave);
 
-    // convierte las ondas en camino
+    // transform the waves into paths
     u32path_map paths = {0};
     wave_to_path(&root_wave, &paths);
 
     hashmap_init(out_map, hashmap_size(&paths), u32vertices_destroyer);
     mkey_t next_key = 0;
 
-    // ahora añade todas las rutas que contenga solamente
-    // el vertice final
+    // now filter all paths where the final vertex matches
+    // with the destination vertex
 
     struct hashmap_iterator path_it = {0};
     hashmap_iterator_init(&path_it, &paths);
@@ -484,11 +476,12 @@ void graph_minimal_path(struct graph* graph,
     size_t vertex_len = graph->len;
 
     bool* visited = calloc(vertex_len, sizeof(bool));
-    // permite localizar el costo/peso minimo que dado
-    // vertice puede tener incluyendo su ruta
+    // allow to track the minimal weight that given vertex
+    // can can have, including its path
     struct path* minimal_paths = calloc(vertex_len, sizeof(struct path));
 
-    // inicializa con un costo invalido (el mayor posible/infinito)
+    // initialize with an invalid weight
+    // (the maximum possible / infinity)
     for (size_t i = 0; i < vertex_len; i++) {
         struct path* path = &minimal_paths[i];
 
@@ -496,8 +489,8 @@ void graph_minimal_path(struct graph* graph,
         path->weight = INT32_MAX;
     }
 
-    // crea la ruta inicial para el vertice de partida
-    // y añadirla al arreglo minimal_paths
+    // create an initial path for the source vertex
+    // and add it in minimal_paths
     struct vertex_array initial_vertex = {0};
     vertex_array_from(&initial_vertex, (vertex_t[1]){start_vertex}, 1);
 
@@ -517,12 +510,12 @@ void graph_minimal_path(struct graph* graph,
 
         visited[i] = true;
 
-        // la ruta actual del vertice i
+        // the actual path of vertex i
         struct path* i_path = &minimal_paths[i];
 
-        // los vertices que han sido acomulado
+        // the vertices that have been accumulated
         struct vertex_array* accumulated_vertices = &i_path->vertices;
-        // el costo/peso acomulado de esta ruta
+        // the weight accumulated of this path
         int32_t accumulated_distance = i_path->weight;
 
         for (vertex_t j = 0; j < vertex_len; j++) {
@@ -530,27 +523,27 @@ void graph_minimal_path(struct graph* graph,
                 continue;
             }
 
-            // el costo/peso entre el arco <i, j>
+            // the weight of edge <i, j>
             int32_t distance = graph_get(graph, i, j);
-            // el costo/peso absorbido entre el arco <i, j>
-            // y los acomulados
+            // the absorbed weight of edge <i, j> and
+            // the accumulated ones
             int32_t absorbed_distance = distance + accumulated_distance;
 
             struct path* j_path = &minimal_paths[j];
 
-            // si se encontró una ruta con el menor costo/peso
-            // actual, cambiarla por la nueva que se ha generado
+            // if a path was found to have the lower weight
+            // then change it by this new path
 
             if (j_path->weight > absorbed_distance) {
                 struct vertex_array* absorbed_vertices = &j_path->vertices;
 
-                // hacer una copia modelo de los vertices
-                // incluyendo este al final
+                // clone the sequence model including this as
+                // the end vertex
                 vertex_array_clone(accumulated_vertices, absorbed_vertices);
                 vertex_array_reserve(absorbed_vertices, 1);
                 absorbed_vertices->data[absorbed_vertices->len++] = j;
 
-                // el costo/peso minimo encontrado
+                // the new lower weight found
                 j_path->weight = absorbed_distance;
             }
 
@@ -558,23 +551,23 @@ void graph_minimal_path(struct graph* graph,
         }
     }
 
-    // Ahora añadir todos las rutas generadas a un mapa
+    // now add all generated paths in a map
     hashmap_init(out_map, 0, u32path_destroyer);
 
     for (vertex_t i = 0; i < vertex_len; i++) {
         struct path* path = &minimal_paths[i];
-        // si no se pudo generar un camino hasta aquí
+        // if it couldn't generate a path
         if (path->weight == INT32_MAX) {
             continue;
         }
-        // Si la longitud es 1, indica que es el vertice
-        // de partida, así que ignorarlo
+        // if the length is 1, it means that is the
+        // source vertex, so ignore it
         if (path->vertices.len == 1) {
             path_destroy(path);
             continue;
         }
 
-        // hacer una copia en el heap de la ruta
+        // move path into heap to not loose it
         struct path* heap_path = malloc(sizeof(struct path));
         memcpy(heap_path, path, sizeof(struct path));
 
@@ -614,9 +607,9 @@ static bool g_initial_path(struct graph* graph, vertex_t start_vertex, vertex_t 
         return false;
     }
 
-    // Verificar si los vertices son alcanzable, es decir,
-    // existe al menos un camino para llegar a un vertice
-    // a otro
+    // Check if two vertices are reachable, such that,
+    // exist at least a path to arrive a vertex from
+    // another one
     return graph_reachable(graph, start_vertex, end_vertex);
 }
 

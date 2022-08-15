@@ -10,15 +10,15 @@
 #define VERTEX_T_MAX SIZE_MAX
 
 /**
- * Representa un vertice.
+ * Represents a vertex.
  */
 typedef size_t vertex_t;
 
 /**
- * Representa un HashMap en el que vincula uint32_t (la llave)
- * con un struct vertex_array (el valor).
+ * Represents a HashMap that links uint32_t (the key) with a
+ * struct vertex_array (the value).
  *
- * Visto de otra forma: HashMap<uint32_t, struct vertex_array>
+ * Seen in another way: HashMap<uint32_t, struct vertex_array>
  *
  * @see hashmap
  * @see u32vertices_destroyer
@@ -26,23 +26,23 @@ typedef size_t vertex_t;
 typedef struct hashmap u32vertices_map;
 
 /**
- * Representa una cola que almacena vertex_t.
+ * Represents a queue that stores vertex_t.
  *
- * @member internal la cola usada internamente
+ * @member internal the queue used internally
  */
 struct queue_vertex {
     queue_t internal;
 };
 
 /**
- * Representa una secuencia/lista de vertices.
+ * Represents a vertex sequence.
  * 
  * @see vertex_array_reserve
  * @see vertex_array_destroy
  *
- * @param capacity la capacidad de la secuencia
- * @param len el tamaño de la secuencia
- * @param data donde se guardan los vertices
+ * @param capacity the sequence capacity
+ * @param len the sequence size
+ * @param data is where vertices are stored
  */
 struct vertex_array {
     size_t capacity;
@@ -52,85 +52,85 @@ struct vertex_array {
 };
 
 /**
- * Crea una secuencia de vertices desde un arreglo.
+ * Create a vertex sequence from an array.
  *
- * @param array la secuencia a almacenar los datos
- * @param data el arreglo para copiar
- * @param len la longitud del arreglo
+ * @param array the sequence to store the data
+ * @param data the array to copy
+ * @param len the array length
  */
 void vertex_array_from(struct vertex_array* array, const vertex_t* data, size_t len);
 /**
- * Reserva más espacio a la secuencia de vertices.
+ * Reserve more space to vertex sequence.
  *
- * Si capacity es 0, no se aplicará ninguna acción.
+ * If capacity is 0, then it won't apply any action.
  *
- * @param array la secuencia donde se reervará espacio
- * @param capacity la cantidad de espacio a reservar
+ * @param array the sequence to reserve space
+ * @param capacity the capacity to reserve
  */
 void vertex_array_reserve(struct vertex_array* array, size_t capacity);
 /**
- * Clona los datos de una secuencia a otra.
+ * Clone a vertex sequence into another one.
  *
- * @param array la secuencia a clonar
- * @param out la secuencia de salida clonada
+ * @param array the sequence to clone
+ * @param out the cloned sequence
  */
 void vertex_array_clone(const struct vertex_array* array, struct vertex_array* out);
 /**
- * Imprime una secuencia de vertices.
+ * Print a vertex sequence.
  *
- * @param array la secuencia a imprimir
+ * @param array the sequence to print
  */
 void vertex_array_print(struct vertex_array* array);
 /**
- * Elimina toda la información de la secuencia.
+ * Destroy a vertex sequence.
  *
- * @param array la secuencia a destruir
+ * @param array the sequence to destroy
  */
 void vertex_array_destroy(struct vertex_array* array);
 
 /**
- * Inicializa una cola de vertex_t.
+ * Initialize a queue of vertex_t.
  * 
- * @param queue la cola a inicializar
+ * @param queue tthe queue to initialize
  */
 static inline void queue_vertex_init(struct queue_vertex* queue) {
     queue_init(&queue->internal, free);
 }
 
 /**
- * Verifica si la cola no está vacia.
+ * Check if queue is not empty.
  *
- * @param queue la cola a verificar
- * @return si no está vacia
+ * @param queue the queue to check
+ * @return true if it's empty, otherwise false
  */
 static inline bool queue_vertex_empty(struct queue_vertex* queue) {
     return queue_empty(&queue->internal);
 }
 
 /**
- * Regresa el tamaño actual de la cola.
+ * Return the actual size of queue.
  *
- * @param queue la cola a saber el tamaño
- * @return el tamaño de la cola
+ * @param queue the queue to know the size
+ * @return the queue size
  */
 static inline size_t queue_vertex_size(struct queue_vertex* queue) {
     return queue->internal.size;
 }
 
 /**
- * Destruye ya una cola inicializada.
+ * Destroy an initialized queue.
  *
- * @param queue la cola a destruir
+ * @param queue the queue to destroy
  */
 static inline void queue_vertex_destroy(struct queue_vertex* queue) {
     queue_destroy(&queue->internal);
 }
 
 /**
- * Añade un vertice a la cola.
+ * Add a vertex into the queue.
  *
- * @param queue la cola a añadir el vertice
- * @param vertex el vertice a añadir
+ * @param queue the queue where to add the vertex in
+ * @param vertex the vertex to add
  */
 static inline void queue_vertex_add(struct queue_vertex* queue, vertex_t vertex) {
     vertex_t* vertex_ptr = malloc(sizeof(vertex_t));
@@ -140,10 +140,10 @@ static inline void queue_vertex_add(struct queue_vertex* queue, vertex_t vertex)
 }
 
 /**
- * Extrae un vertice de la cola.
+ * Extract a vertex from queue.
  *
- * @param queue la cola a extraer el vertice
- * @return el vertice, VERTEX_T_MAX si la cola está vacia
+ * @param queue the queue where to extract the vertex from
+ * @return the vertex, VERTEX_T_MAX if the queue is empty
  */
 static inline vertex_t queue_vertex_del(struct queue_vertex* queue) {
     vertex_t* vertex_ptr = queue_del(&queue->internal);
@@ -157,7 +157,7 @@ static inline vertex_t queue_vertex_del(struct queue_vertex* queue) {
 }
 
 /**
- * El destructor del hashmap de u32vertices_map.
+ * The value destructor of u32vertices_map.
  *
  * @see hashmap#destroyer
  */

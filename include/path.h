@@ -7,15 +7,14 @@
 #include "map.h"
 
 /**
- * Representa un camino de un vertice origen a un vertice
- * destino.
+ * Represents a path from a source vertice until a destination
+ * vertex.
  *
  * @see gpath_destroy
  *
- * @member vertices es la secuencia de vertices (vertex_t) del
- *                  camino
- * @member weight es el peso final que toma el camino desde
- *                el vertice origen hasta el vertice destino
+ * @member vertices is the vertex (vertex_t) sequence
+ * @member weight is the final weight that will take from
+ *                source vertex until destination vertex
  */
 struct path {
     struct vertex_array vertices;
@@ -23,10 +22,10 @@ struct path {
 };
 
 /**
- * Representa un HashMap en el que vincula uint32_t (la llave)
- * con un struct gpath (el valor).
+ * Represents a HashMap that links uin32_t (the key) with a
+ * struct path (the value).
  *
- * Visto de otra forma: HashMap<uint32_t, struct gpath>
+ * Seen in another way: HashMap<uint32_t, struct path>
  *
  * @see hashmap
  * @see u32path_destroyer
@@ -34,21 +33,21 @@ struct path {
 typedef struct hashmap u32path_map;
 
 /**
- * Inicializa un camino con los vertices que lo componen.
+ * Initialize a path with the vertices that compose it
  *
- * @param path la ruta a inicializar
- * @param vertices los vertices del camino
+ * @param path the path to initialize
+ * @param vertices the vertex sequence
  */
 void path_init(struct path* path, struct vertex_array* vertices);
 /**
- *  Destruye un camino ya inicializado.
+ * Destroy an initialized path.
  *
- *  @param path el camino destruir
+ * @param path the path to destroy
  */
 void path_destroy(struct path* path);
 
 /**
- * El destructor del hashmap de u32path_map.
+ * The value destructor of a u32path_map hashmap.
  *
  * @see hashmap#destroyer
  */

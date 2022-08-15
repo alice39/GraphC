@@ -9,7 +9,7 @@ void vertex_array_from(struct vertex_array* array, const vertex_t* data, size_t 
         return;
     }
 
-    // reserva el espacio suficiente si es necesario
+    // reserve more enough space if it's needed
     if (len > array->capacity) {
         vertex_array_reserve(array, len - array->capacity);
     }
@@ -26,8 +26,8 @@ void vertex_array_reserve(struct vertex_array* array, size_t capacity) {
     size_t new_cap = array->capacity + capacity;
     vertex_t* new_data = realloc(array->data, sizeof(vertex_t) * new_cap);
 
-    // es posible que la nueva capacidad no pueda
-    // ser reservada por falta de memoria
+    // it is possible that capacity cannot be reserved
+    // due to out of memory
     if (new_data == NULL) {
         return;
     }

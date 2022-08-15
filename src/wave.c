@@ -45,8 +45,8 @@ struct wave* wave_add(struct wave* wave, vertex_t vertex) {
         return NULL;
     }
 
-    // verifica si ya hay uno existente para evitar
-    // duplicados
+    // check if vertex already exists in this wave
+    // to avoid duplicates
     struct wave* found = wave_get(wave, vertex);
     if (found != NULL) {
         return found;
@@ -89,19 +89,19 @@ void wave_to_path(struct wave* wave, u32path_map* out_map) {
     stack_push(&stack, wave);
 
     size_t root_depth = wave->depth;
-    // la secuencia de modelo actual para ser copiada
+    // the model sequence to be cloned
     struct vertex_array model = {0};
 
     while (!stack_empty(&stack)) {
         struct wave* pop_wave = stack_pop(&stack);
 
-        // se añade el vertice de la onda actual en el modelo
+        // add the wave vertex in the model sequence
         vertex_array_reserve(&model, 1);
         model.data[pop_wave->depth - root_depth] = pop_wave->vertex;
         model.len = pop_wave->depth - root_depth + 1;
 
-        // se hace una copia del model para añadirla a los
-        // caminos generados en out_map
+        // a clone is made to add it as generated paths
+        // in out_map
 
         struct vertex_array vertices = {0};
         vertex_array_clone(&model, &vertices);
@@ -110,8 +110,8 @@ void wave_to_path(struct wave* wave, u32path_map* out_map) {
         path_init(path, &vertices);
         hashmap_put(out_map, next_key++, path);
 
-        // se añaden todas las ondas subyacentes a esta onda
-        // para seguir el mismo modelo
+        // add all underlying sub-waves to keep seeking the
+        // same sequence model
 
         struct list_node* node = pop_wave->subwaves.last;
         for (; node != NULL; node = node->back) {
@@ -121,7 +121,7 @@ void wave_to_path(struct wave* wave, u32path_map* out_map) {
 
     vertex_array_destroy(&model);
 
-    // quitamos el camino raiz o el camino con 1 vinculo
+    // delete the root path that just contains 1 edge
     u32path_destroyer(hashmap_del(out_map, 0));
 }
 

@@ -13,23 +13,23 @@
 #include "path.h"
 
 /**
- * Representa el valor en el que en no existe un vinculo de
- * dos vertices.
+ * Represents the value that indicates that there is no edge
+ * between two vertices.
  */
 #define NONE_WEIGHT32_VALUE INT32_MAX
 
 /**
- * Representa las diferentes componentes conexas de un grafo.
+ * Represents the different connected components of a graph.
  *
  * @see gcomponent_destroy
  *
- * @member array es una estructura en el cual vincula el indice
- *               con un vertice (vertex_t) en el rango [0, len)
- *               con la ID de la componente conexa en el que
- *               pertenence 
- * @member map es donde se enlaza la ID de la componente conexa
- *         con una lista de vertices (vertex_t) que pertenenen
- *         a la misma componente conexa
+ * @member array is a structure which links the index of a
+ *               vertex (vertex_t) in the interval [0, len)
+ *               with the ID of a connected component where
+ *               it belongs to
+ * @member map is where links the connected component's ID
+ *         with an array of vertices (vertex_t) that belong to
+ *         the same connected component
  */
 struct gcomponent {
     struct {
@@ -41,19 +41,18 @@ struct gcomponent {
 };
 
 /** 
- * La representación de un grafo indurecto en una matriz de
- * adyacencia de 32bits.
+ * Represents an undirected graph in an adjacency matrix of
+ * 32bits.
  * 
  * @see graph_init
  * @see graph_destroy
  *
- * @member weighted indica si el grafo es pesado
- * @member cache es usado internamente para acelerar algunas
- *               operaciones
- * @member len la cantidad de vertices que hay en el grafo
- * @member matrix almacena los vinculos entre dos vertices;
- *                si es un grafo pesado entonces se guardará
- *                el peso de dicho vinculo
+ * @member weighted indicates if the graph is weighted
+ * @member cache is used internally to speed up some operations
+ * @member len is the length of vertices that there are in
+ * @member matrix stores the edges between two vertices;
+ *                if the graph is weighted then it'll store
+ *                the given weight otherwise 1
  */
 struct graph {
     bool weighted;
@@ -67,116 +66,119 @@ struct graph {
 };
 
 /**
- * Inicializa un grafo para ser usado.
+ * Initialize a graph to be used for.
  *
  * @see graph_destroy
  *
- * @param graph el grafo a inicializar
- * @param weighted si el grafo es pesado
- * @param len la cantidad de vertices que habrá en el grafo
+ * @param graph the graph to initialize
+ * @param weighted if the graph is weighted
+ * @param len the length of vertices that there will be
  */
 void graph_init(struct graph* graph, bool weighted, size_t len);
 /**
- * Imprime en el estandar de salida la matriz de adyacencia
- * del grafo.
+ * Print in STDOUT the adjacency matrix of given graph.
  *
- * @param graph el grafo a ser imprimido
+ * @param graph the graph to be printed
  */
 void graph_print(const struct graph* graph);
 /**
- * Destruye un grafo ya inicializado.
+ * Destroy a initialized graph.
  *
- * @param graph el grafo a destruir
+ * @param graph the graph to destroy
  */
 void graph_destroy(struct graph* graph);
 
 /**
- * Vincula dos vertices en el grafo con un peso.
+ * Add an edge between two vertices in the graph with a weight.
  *
- * Si los vertices están fueran de los bordes del grafo, no se
- * aplicará ningun vinculo.
+ * If the vertices are out of range (in graph size), it will
+ * not apply any edge.
  *
- * @param graph el grafo a vincular los vertices
- * @param vi el vertice origen (a partir de)
- * @param wj el vertice destino (hasta a)
- * @param weight el peso del vinculo, si el grafo no es pesado
- *               entonces se tomara en cuenta valores de 0 y 1
+ * @param graph the graph to add the edge
+ * @param vi the source vertex
+ * @param wj the destination vertex
+ * @param weight the edge's weight, if the graph is not
+ *               weighted then it'll take in count 1 values
  */
 void graph_addw(struct graph* graph, vertex_t vi, vertex_t wj, int32_t weight);
 /**
- * Vincula dos vertices en el grafo.
+ * Add an edge between two vertices in the graph.
  *
  * @see graph_addw
  *
- * @param graph el grafo a vincular los vertices
- * @param vi el vertice origen (a partir de)
- * @param wj el vertice destino (hasta a)
+ * @param graph the graph to add the edge
+ * @param vi the source vertex
+ * @param wj the destination vertex
  */
 void graph_add(struct graph* graph, vertex_t vi, vertex_t wj);
 /**
- * Comprueba que dos vertices están vinculados en el grafo.
+ * Check if two vertices have an edge in the graph.
  *
- * @param graph el grafo a verificar los vertices
- * @param vi el vertice origen (a partir de)
- * @param wj el vertice destino (hasta a)
+ * @param graph the graph to check the vertices
+ * @param vi the source vertex
+ * @param wj the destination vertex
+ * @return true if they have an edge, false otherwise
  */
 bool graph_has(const struct graph* graph, vertex_t vi, vertex_t wj);
 /**
- * Devuelve el peso de un vinculo entre dos vertices del grafo.
+ * Return the weight of two vertices's edge in the graph.
  *
- * Si el vinculo no existe entonces no se aplicará ninguna
- * acción.
+ * If there's no edge, then it'll not apply any action.
  *
  * @see graph_has
  *
- * @param graph el grafo a buscar el peso del vinculo
- * @param vi el vertice origen (a partir de)
- * @param wj el vertice destino (hasta a)
- * @return donde se guardará el peso del vinculo
+ * @param graph the graph to look for edge's weight
+ * @param vi the source vertex
+ * @param wj the destination vertex
+ * @return the edge's weighto or NONE_WEIGHT32_VALUE if
+ *         there is no
  */
 int32_t graph_get(const struct graph* graph, vertex_t vi, vertex_t wj);
 /**
- * Deshace el vinculo de dos vertices del grafo.
+ * Undo the vertices's edge in the graph.
  *
- * @param graph el grafo a deshacer el vinculo
- * @param vi el vertice origen (a partir de)
- * @param wj el vertice destino (hasta a)
+ * @param graph the graph to undo the edge
+ * @param vi the source vertex
+ * @param wj the destination vertex
  */
 void graph_del(struct graph* graph, vertex_t vi, vertex_t wj);
 
 /**
- * Cuenta la cantidad de vinculos que posee vi del grafo.
+ * Count how many edges a vertice vi in the graph.
  *
- * La cantidad va de acuerdo a (matemáticamente):
+ * The size goes according to (mathetimatically):
  *     G = (V, A)
- *     (vi, w) para todo w en V
+ *     (vi, w) for all w in V
  *
- * @param graph el grafo a contar los vinculos de vi
- * @param vi el vertice origen (a partir de)
+ * @param graph the graph to count the vi's edges
+ * @param vi the source vertex
+ * @return the size of edges that vertice vi has
  */
 size_t graph_rcount(const struct graph* graph, vertex_t vi); 
 /**
- * Cuenta la cantidad de vinculos que posee wj del grafo.
+ * Count how many edges a vertice wj in the graph.
  *
- * La cantidad va de acuerdo a (matemáticamente):
+ * The size goes according to (mathetimatically):
  *     G = (V, A)
- *     (v, wj) para todo v en V
+ *     (v, wj) for all v in V
  *
- * @param graph el grafo a contar los vinculos de wj
- * @param wj el vertice destino (hasta a)
+ * @param graph the graph to count the wj's edges
+ * @param wj the source vertex
+ * @return the size of edges that vertice wj has
  */
 size_t graph_ccount(const struct graph* graph, vertex_t wj); 
 
 /**
- * Genera las ondas desde un vertice de origen hasta un posible
- * vertice final.
+ * Generate the waves from a start vertex until a possible end
+ * vertex.
  *
- * @param graph el grafo donde se generarán las ondas
- * @param start_vertex el vertice de origen
- * @param end_vertex el vertice final, VERTEX_T_MAX si ninguno
- * @param should_duplicate si existen vertices en el que están
- *                         conectados entre si.
- * @param out_wave las ondas generadas
+ * @param graph the graph where to generate the waves on
+ * @param start_vertex the source vertex
+ * @param end_vertex the destination vertex, VERTEX_T_MAX if
+ *                   none
+ * @param should_duplicate if there are vertices that are
+ *                         inter-connected between themselves
+ * @param out_wave the generated waves
  */
 void graph_wave(const struct graph* graph,
                 vertex_t start_vertex,
@@ -184,68 +186,62 @@ void graph_wave(const struct graph* graph,
                 bool should_duplicate,
                 struct wave* out_wave);
 /**
- * Evalua las componentes conexas que existen en el grafo.
+ * Evalue the connected components that exist in the graph.
  *
- * @param graph el grafo a detectar las componentes conexas
- * @param out_comp donde se guardará las componentes conexas
- *                 pero en modo solo-lectura, out_comp puede
- *                 ser NULL
+ * @param graph the graph to detect the connected components
+ * @param out_comp where it'll store the connected components
+ *                 but in read-only mode, out_comp can be NULL
  */
 void graph_components(struct graph* graph, const struct gcomponent** out_comp);
 /**
- * Verifica si dos vertices son alcanzable en el grafo.
+ * Check if two vertices are reachable in the graph.
  *
- * Dos vertices son alcanzable solo si existe un camino, de la
- * misma forma, existe un camino si ambos vertices pertenencen
- * a la misma componente conexa.
+ * Two vertices are reachable just if it exists a path, in
+ * the same way, it exists a pth just if both vertices belong
+ * to the same connected component.
  *
  * @see graph_components
  *
- * @param graph el grafo en el que pertenencen los vertices
- * @param start_vertex el vertice a partir
- * @param end_vertex el vertice a llegar
- * @return true si es alcanzable de lo contrario false
+ * @param graph the graph that vertices belong in
+ * @param start_vertex the source vertex
+ * @param end_vertex the destionation vertex
+ * @return true if reachable, otherwise false
  */
 bool graph_reachable(struct graph* graph, vertex_t start_vertex, vertex_t end_vertex);
 /**
- * Encuentra las rutas más cortas entre dos vertices en el
- * grafo.
+ * Find the shortest paths between two vertices in the graph.
  *
- * Se tomará en cuenta lo siguiente:
- *   1. Ambos vertices deben ser alcanzable, de otra forma,
- *      no podrá existir un camino que una ambos vertices.
- *   2. Se define el camino más corto; como el menor número
- *      de vinculos (arcos).
- *   3. Pueden existir varios caminos en el que son
- *      equivalentemente cortos, por lo que serán incluidos.
+ * It'll take in count the followings:
+ *   1. Both vertices must be reachable, otherwise, it'll not
+ *      be able to exist a path that connects both vertices.
+ *   2. A short path is defined as; the lower size of edges.
+ *   3. It can exist several paths that are equivally shorts,
+ *      thereby it will be included too.
  *
- * @param graph el grafo para evaluar el camino más corto
- * @param start_vertex el vertice de partida
- * @param end_vertex el vertice de destino
- * @param out_map donde se guardarán los caminos encontrados
+ * @param graph the graph to evalue the shortest path
+ * @param start_vertex the source vertex
+ * @param end_vertex the destination vertex
+ * @param out_map where it'll be stored the paths found
  */
 void graph_short_path(struct graph* graph,
                       vertex_t start_vertex,
                       vertex_t end_vertex,
                       u32vertices_map* out_map);
 /**
- * Encuentra las rutas más débil entre dos vertices en el
- * grafo.
+ * Find the weakest paths between two vertices in the graph.
  *
- * Se tomará en cuenta lo siguiente:
- *   1. Ambos vertices deben ser alcanzable, de otra forma,
- *      no podrá existir un camino que una ambos vertices.
- *   2. Se define el camino más débil; como la sumatoria
- *      del peso de los vinculos (arcos) la más minima posible.
- *   3. Se almacenará todos los caminos debiles hasta llegar
- *      a vertice final, todos si VERTEX_T_MAX está presente
+ * It'll take in count the followings:
+ *   1. Both vertices must be reachable, otherwise, it'll not
+ *      be able to exist a path that connects both vertices.
+ *   2. A weak path is defined as; the lower sum of weights.
+ *   3. It'll store all weakest paths found until to reach
+ *      the destination vertex, all of them if VERTEX_T_MAX is
+ *      present.
  *
- * @param graph el grafo para evaluar el camino más débil
- * @param start_vertex el vertice de partida
- * @param end_vertex el vertice de destino, VERTEX_T_MAX
- *                   si no hay
- * @param out_map donde se guardarán todos los caminos
- *                debiles encontrados
+ * @param graph the graph to evalue the shortest path
+ * @param start_vertex the source vertex
+ * @param end_vertex the destination vertex
+ * @param out_map where it'll be stored the paths found
  */
 void graph_minimal_path(struct graph* graph,
                         vertex_t start_vertex,
@@ -253,9 +249,9 @@ void graph_minimal_path(struct graph* graph,
                         u32path_map* out_map);
 
 /**
- * Destruye un componente ya inicializado.
+ * Destroy an initialized component.
  *
- * @param comp el componente a destruir
+ * @param comp the component to destroy
  */
 void gcomponent_destroy(struct gcomponent* comp);
 

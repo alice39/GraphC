@@ -4,54 +4,52 @@
 #include <map.h>
 
 /**
- * Convierte la llave de un HashMap en un index de un bucket.
+ * Convert a key of a HashMap in a bucket index.
  *
- * @param map el hashmap donde pertene la llave
- * @param key la llave a convertir en un index
- * @return el index del bucket que pertene la llave
+ * @param map the hashmap where key belongs in
+ * @param key the key to convert in an index
+ * @return the index that belongs the key
  */
 static inline msize_t _hashmap_buck_pos(const struct hashmap* map, mkey_t key);
 /**
- * Indica el factor de carga actual del hashmap.
+ * Indicate the actual load factor of a hashmap.
  *
- * @param map el hashmap para obtener el factor de carga
- * @return el factor de carga actual
+ * @param map the hashmap where to get the load factor
+ * @return the actual load factor
  */
 static inline float _hashmap_load_factor(const struct hashmap* map);
 
 /**
- * Añade un nodo a un hashmap.
+ * Add a node into a hashmap.
  *
- * @param map el hashmap donde se irá añadir el nodo
- * @param node el nodo a añadir
- * @param out_value el valor antiguo de un nodo existente
- * @param readonly si el nodo a añadir está en modo lectura
+ * @param map the hashmap where to add the node in
+ * @param node the node to add
+ * @param out_value the old value from an existing node
+ * @param readonly if the node is read-only
  */
 static void _hashmap_put(struct hashmap* map,
                          struct hashmap_node* node,
                          void** out_value,
                          bool readonly);
 /**
- * Verifica y reserva más espacio en un hashmap.
+ * Check and reserve more space in a hashmap.
  *
- * Se irá a reserver solo sí el factor de carga ya se aproxima
- * al factor de carga máximo del hashmap.
+ * It'll reserve just if the load factor is getting
+ * approximated to maximum load factor of hashmap.
  *
  * @see hashmap_reserve
  *
- * @param map el hashmap a reserver espacio
+ * @param map the hashmap to reserve more space
  */
 static void _hashmap_reserve(struct hashmap* map);
 /**
- * Busca el nodo con dada llave en un hashmap.
+ * Find a node with given key in a hashmap.
  *
- * @param map el hashmap donde se irá a buscar el nodo
- * @param key la llave vinculada al nodo
- * @param out_back el nodo previo, regresa NULL si no hay
- *                 también out_back puede ser NULL para
- *                 ignorarlo
- * @param out_node el nodo encontrado, regresa NULL si no
- *                 existe
+ * @param map the hashmap where to seek the node
+ * @param key the key linked to the node
+ * @param out_back the back node, output NULL if there is no
+ *                 out_back can be NULL to ignore it
+ * @param out_node the found node, NULL if it doesn't exist
  */
 static void _hashmap_find(const struct hashmap* map,
                           mkey_t key,
@@ -71,7 +69,7 @@ void hashmap_init(struct hashmap* map, msize_t initial_capacity, mfree_f destroy
     map->destroyer = destroyer;
     map->bucks = calloc(initial_capacity, sizeof(struct hashmap_node*));
 
-    // Solo si falló al reservar espacio
+    // just if it failed to reserve space
     if (map->bucks == NULL) {
         map->reserved = 0;
     }
@@ -97,8 +95,7 @@ void hashmap_reserve(struct hashmap* map, msize_t capacity) {
     map->bucks = new_bucks;
     map->size = 0;
 
-    // rehash todos los nodos antiguos al nuevo
-    // almacenanimento
+    // rehash all nodes in the new buck array
 
     for (size_t i = 0; i < old_reserved && size > 0; i++) {
         struct hashmap_node* node = old_bucks[i];
